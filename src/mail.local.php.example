@@ -1,0 +1,11 @@
+<?php
+
+return [
+	'host' => '127.0.0.1',
+	'port' => 1025,
+	'username' => '',
+	'password' => '',
+	'from_email' => 'noreply@yourdomain.dev',
+	'from_name' => 'PhpLearn',
+	'base_url' => 'http://localhost:8000',
+];

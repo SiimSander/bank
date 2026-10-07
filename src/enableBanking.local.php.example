@@ -1,0 +1,18 @@
+<?php
+
+// Legacy local config — prefer .env (see .env.example).
+// This file format is still supported for local development when .env is absent.
+
+return [
+	'environment' => 'sandbox',
+	'sandbox' => [
+		'application_id' => 'your-sandbox-application-id-uuid',
+		'private_key_path' => __DIR__ . '/../secrets/enablebanking/your-sandbox-application-id-uuid.pem',
+		'redirect_url' => 'http://localhost:8000/bank/lhv/callback',
+	],
+	'production' => [
+		'application_id' => 'your-production-application-id-uuid',
+		'private_key_path' => __DIR__ . '/../secrets/enablebanking/your-production-application-id-uuid.pem',
+		'redirect_url' => 'https://example.com/bank/lhv/callback',
+	],
+];
