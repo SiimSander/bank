@@ -95,6 +95,33 @@ php bin/migrate.php up
 
 5. Smoke test `/health`, login, add a bank entry, and LHV sync (if used).
 
+## Vercel
+
+The repo includes `vercel.json` and `api/index.php`, which run the app on the community `vercel-php` runtime. Local development is unchanged.
+
+1. Create a hosted MySQL database (needs TLS and to be reachable from the internet). Import the schema from your machine:
+
+```bash
+mysql -h DB_HOST -u DB_USER -p DB_NAME < db/tables.sql
+```
+
+   Then run `php bin/migrate-baseline.php` with the same `DB_*` values set as environment variables.
+2. Import the GitHub repo in Vercel. Framework preset `Other`; leave the build command and output directory empty.
+3. Add these environment variables in Vercel (names are in `.env.example`):
+   - `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://<your-domain>`, `TRUST_PROXY=true`
+   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, plus `DB_SSL=true` (and `DB_SSL_CA_PEM` if the provider needs its own CA)
+   - `LOG_TO_STDERR=true` (logs appear in the Vercel dashboard)
+   - `MAIL_*` and the `LEGAL_*` values
+   - `ENABLE_BANKING_*` only if LHV sync is used; pass the PEM through `ENABLE_BANKING_PRIVATE_KEY` with `\n` for line breaks
+4. Sessions are stored in the `sessions` table automatically (`SESSION_DRIVER` defaults to `database` on Vercel).
+5. Apply new migrations to the hosted database from your machine before deploying code that needs them:
+
+```bash
+DB_HOST=... DB_NAME=... DB_USER=... DB_PASSWORD=... DB_SSL=true php bin/migrate.php up
+```
+
+Backups (`bin/backup-db.php`) cannot run on Vercel; use the database provider's backups.
+
 ## Rollback
 
 There is no automatic down-migration. Rollback procedure:
