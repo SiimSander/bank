@@ -38,7 +38,8 @@ function enableBankingJwt(): string {
 	$segments = enableBankingBase64UrlEncode(json_encode($header))
 		. '.' . enableBankingBase64UrlEncode(json_encode($payload));
 
-	$privateKey = openssl_pkey_get_private(file_get_contents($config['private_key_path']));
+	$privateKeyPem = $config['private_key'] !== '' ? $config['private_key'] : file_get_contents($config['private_key_path']);
+	$privateKey = openssl_pkey_get_private($privateKeyPem);
 	openssl_sign($segments, $signature, $privateKey, OPENSSL_ALGO_SHA256);
 
 	return $segments . '.' . enableBankingBase64UrlEncode($signature);
