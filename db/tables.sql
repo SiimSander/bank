@@ -214,3 +214,11 @@ CREATE TABLE stock_goal_colors (
 	UNIQUE (account_id, stock_key),
 	FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
+
+
+CREATE TABLE sessions (
+	id VARCHAR(128) PRIMARY KEY,
+	data MEDIUMBLOB NOT NULL,
+	last_activity INT UNSIGNED NOT NULL,
+	INDEX idx_sessions_last_activity (last_activity)
+);
