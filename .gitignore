@@ -17,6 +17,9 @@ storage/logs/*.log
 storage/backups/*.sql
 storage/backups/*.sql.gz
 
+# Node
+node_modules/
+
 # PHP
 vendor/
 composer.phar
