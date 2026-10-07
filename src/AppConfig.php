@@ -1,6 +1,21 @@
 <?php
 
 final class AppConfig {
+	/** Keys that real environment variables (e.g. on Vercel) set or override on top of .env. */
+	private const PROCESS_ENV_KEYS = [
+		'APP_ENV', 'APP_DEBUG', 'APP_URL', 'APP_NAME', 'TRUST_PROXY',
+		'LEGAL_CONTROLLER_NAME', 'LEGAL_REGISTRY_CODE', 'LEGAL_ADDRESS', 'LEGAL_EMAIL', 'LEGAL_COUNTRY',
+		'LEGAL_HOSTING_PROVIDER', 'LEGAL_SMTP_PROVIDER',
+		'LEGAL_PRIVACY_VERSION', 'LEGAL_TERMS_VERSION', 'LEGAL_BANK_AIS_VERSION',
+		'DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD',
+		'DB_SSL', 'DB_SSL_CA', 'DB_SSL_CA_PEM',
+		'MAIL_HOST', 'MAIL_PORT', 'MAIL_USERNAME', 'MAIL_PASSWORD', 'MAIL_FROM_EMAIL', 'MAIL_FROM_NAME',
+		'ENABLE_BANKING_ENV', 'ENABLE_BANKING_APP_ID', 'ENABLE_BANKING_PRIVATE_KEY_PATH',
+		'ENABLE_BANKING_PRIVATE_KEY', 'ENABLE_BANKING_REDIRECT_URL',
+		'LOG_PATH', 'LOG_LEVEL', 'LOG_TO_STDERR',
+		'SESSION_DRIVER',
+	];
+
 	private static bool $loaded = false;
 	private static string $rootPath = '';
 	/** @var array<string, string> */
@@ -18,9 +33,10 @@ final class AppConfig {
 			self::$values = self::parseEnvFile($envPath);
 		}
 
+		self::loadProcessEnvironment();
 		self::loadLegacyLocalPhp();
 
-		if (!is_file($envPath)) {
+		if (!is_file($envPath) && self::$values === []) {
 			static $legacyWarningShown = false;
 			if (!$legacyWarningShown) {
 				error_log('AppConfig: using legacy *.local.php files. Copy .env.example to .env for production.');
@@ -145,13 +161,15 @@ final class AppConfig {
 		];
 	}
 
-	/** @return array<string, string> */
+	/** @return array<string, string> `private_key` holds the inline PEM, `private_key_path` the file fallback. */
 	public static function enableBankingConfig(): array {
-		$keyPath = self::require('ENABLE_BANKING_PRIVATE_KEY_PATH');
+		$inlineKey = str_replace('\n', "\n", self::get('ENABLE_BANKING_PRIVATE_KEY', '') ?? '');
+		$keyPath = $inlineKey === '' ? self::require('ENABLE_BANKING_PRIVATE_KEY_PATH') : (self::get('ENABLE_BANKING_PRIVATE_KEY_PATH', '') ?? '');
 
 		return [
 			'application_id' => self::require('ENABLE_BANKING_APP_ID'),
-			'private_key_path' => self::resolvePath($keyPath),
+			'private_key_path' => $keyPath === '' ? '' : self::resolvePath($keyPath),
+			'private_key' => $inlineKey,
 			'redirect_url' => self::require('ENABLE_BANKING_REDIRECT_URL'),
 		];
 	}
@@ -182,6 +200,16 @@ final class AppConfig {
 		}
 
 		return $vars;
+	}
+
+	private static function loadProcessEnvironment(): void {
+		foreach (self::PROCESS_ENV_KEYS as $key) {
+			$value = getenv($key);
+
+			if ($value !== false && $value !== '') {
+				self::$values[$key] = $value;
+			}
+		}
 	}
 
 	private static function setLegacyValue(string $key, string $value): void {
