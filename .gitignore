@@ -1,0 +1,24 @@
+# JetBrains IDEs (PhpStorm, IntelliJ IDEA, etc.)
+.idea/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+src/database.local.php
+src/enableBanking.local.php
+src/mail.local.php
+secrets/
+
+# Runtime storage
+storage/logs/*.log
+storage/backups/*.sql
+storage/backups/*.sql.gz
+
+# PHP
+vendor/
+composer.phar
+composer.lock
+.phpunit.cache/
