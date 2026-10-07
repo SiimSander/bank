@@ -1,0 +1,299 @@
+card_date,title,status,position
+2026-07-30,"Log 7hr",failed,0
+2026-07-30,"Clean the crib",failed,1
+2026-07-30,Exercise,failed,2
+2026-07-30,X,done,3
+2026-07-31,"Log 7hr",done,0
+2026-07-31,Exercise,failed,1
+2026-07-31,"1 review at least",done,2
+2026-07-31,"Understand the LP task and create a plan",done,3
+2026-07-31,"No smoke",done,4
+2026-07-31,X,done,5
+2026-08-01,"30min+ php learn",done,0
+2026-08-01,"No smoke",failed,1
+2026-08-01,X,failed,2
+2026-08-03,"Log 7hr",done,0
+2026-08-03,Exercise,done,1
+2026-08-03,"Learn PHP",done,2
+2026-08-03,"Clean the crib",failed,3
+2026-08-03,"No smoke",done,4
+2026-08-03,"No alc",failed,5
+2026-08-03,Invest,done,6
+2026-08-03,X,done,7
+2026-08-04,"Log 7hr",done,0
+2026-08-04,"Learn PHP",done,1
+2026-08-04,"Start finishing LP task (Zapier)",done,2
+2026-08-04,Exercise,failed,3
+2026-08-04,"No smoke",failed,4
+2026-08-04,"No alc",failed,5
+2026-08-04,"Clean crib",failed,6
+2026-08-04,"Code review",done,7
+2026-08-04,X,failed,8
+2026-08-05,"Log 7hr",done,0
+2026-08-05,"Learn PHP",done,1
+2026-08-05,"Deploy API changes into test site (Zapier)",done,2
+2026-08-05,"Code review",done,3
+2026-08-05,Exercise,done,4
+2026-08-05,"Clean crib",failed,5
+2026-08-05,"No alc",failed,6
+2026-08-05,"No smoke",done,7
+2026-08-05,Invest,done,8
+2026-08-05,X,done,9
+2026-08-06,"Log 7hr",done,0
+2026-08-06,"Finish Bamboo HR LP task",done,1
+2026-08-06,"Learn PHP",done,2
+2026-08-06,Reviews,done,3
+2026-08-06,Exercise,failed,4
+2026-08-06,"Clean crib",failed,5
+2026-08-06,"No alc",failed,6
+2026-08-06,"No smoke",done,7
+2026-08-06,X,done,8
+2026-08-07,"Log 7hr",done,0
+2026-08-07,Review,failed,1
+2026-08-07,"Learn PHP",failed,2
+2026-08-07,Exercise,failed,3
+2026-08-07,"No alc",failed,4
+2026-08-07,"No smoke",failed,5
+2026-08-07,"Clean crib",done,6
+2026-08-07,X,done,7
+2026-08-10,"Log 7hr",done,0
+2026-08-10,"Learn PHP",done,1
+2026-08-10,Review,done,2
+2026-08-10,Invest,done,3
+2026-08-10,"Brush teeth",done,4
+2026-08-10,Exercise,failed,5
+2026-08-10,"No smoke",failed,6
+2026-08-10,"No alc",failed,7
+2026-08-10,X,failed,8
+2026-08-11,"Log 7hr",done,0
+2026-08-11,"Learn PHP",done,1
+2026-08-11,Exercise,failed,2
+2026-08-11,Teeth,done,3
+2026-08-11,"No alc",failed,4
+2026-08-11,"No smoke",done,5
+2026-08-11,X,failed,6
+2026-08-12,"Log 7hr",done,0
+2026-08-12,"Learn PHP",done,1
+2026-08-12,Review,done,2
+2026-08-12,Exercise,done,3
+2026-08-12,Teeth,done,4
+2026-08-12,"No alc",failed,5
+2026-08-12,"No smoke",done,6
+2026-08-12,X,done,7
+2026-08-13,"Log 7hr",done,0
+2026-08-13,"Learn PHP",done,1
+2026-08-13,Review,done,2
+2026-08-13,Teeth,done,3
+2026-08-13,Exercise,done,4
+2026-08-13,"No alc",failed,5
+2026-08-13,"No smoke",done,6
+2026-08-13,X,done,7
+2026-08-17,"Log 7hrs",failed,0
+2026-08-17,"Learn PHP",done,1
+2026-08-17,"Try to clone Carsilvania",done,2
+2026-08-17,Review,done,3
+2026-08-17,Exercise,failed,4
+2026-08-17,"No alc",failed,5
+2026-08-17,"No smoke",done,6
+2026-08-17,"Clean room",done,7
+2026-08-17,Teeth,failed,8
+2026-08-17,Invest,done,9
+2026-08-17,X,failed,10
+2026-08-18,"Log 7hrs",done,0
+2026-08-18,"Learn PHP",done,1
+2026-08-18,Review,done,2
+2026-08-18,Carsilvania,done,3
+2026-08-18,"200 pushups",failed,4
+2026-08-18,Teeth,failed,5
+2026-08-18,"No alc",failed,6
+2026-08-18,"No smoke",done,7
+2026-08-18,X,done,8
+2026-08-19,"Log 7hrs",done,0
+2026-08-19,"Finish BambooHR task",done,1
+2026-08-19,"Finish Zapier task",done,2
+2026-08-19,"Learn PHP",done,3
+2026-08-19,Review,done,4
+2026-08-19,Carsilvania,done,5
+2026-08-19,Exercise,failed,6
+2026-08-19,"No alc",failed,7
+2026-08-19,"No smoke",done,8
+2026-08-19,Teeth,done,9
+2026-08-19,"Create savings account",done,10
+2026-08-19,Invest,done,11
+2026-08-19,X,failed,12
+2026-08-24,"Log 7hrs",done,0
+2026-08-24,"Learn PHP",done,1
+2026-08-24,"Merge BambooHR",failed,2
+2026-08-24,"Finish xero task",done,3
+2026-08-24,Review,done,4
+2026-08-24,Carsilvania,done,5
+2026-08-24,Invest,done,6
+2026-08-24,Exercise,failed,7
+2026-08-24,Teeth,failed,8
+2026-08-24,"Clean crib",done,9
+2026-08-24,"No alc",failed,10
+2026-08-24,"No smoke",done,11
+2026-08-24,X,done,12
+2026-08-25,"Log 7hrs",failed,0
+2026-08-25,"Merge bambooHR",failed,1
+2026-08-25,"Learn PHP",done,2
+2026-08-25,Carsilvania,failed,3
+2026-08-25,Review,failed,4
+2026-08-25,Invest,done,5
+2026-08-25,Save,done,6
+2026-08-25,Exercise,failed,7
+2026-08-25,Teeth,failed,8
+2026-08-25,"Clea crib",failed,9
+2026-08-25,"No alc",failed,10
+2026-08-25,"No smoke",done,11
+2026-08-25,X,failed,12
+2026-08-26,"Log 7hrs",done,0
+2026-08-26,"Merge BambooHR",done,1
+2026-08-26,"Learn PHP",done,2
+2026-08-26,Carsilvania,failed,3
+2026-08-26,Review,done,4
+2026-08-26,Exercise,done,5
+2026-08-26,Teeth,done,6
+2026-08-26,"No alc",done,7
+2026-08-26,"No smoke",done,8
+2026-08-26,X,done,9
+2026-08-27,"Log 7hrs",failed,0
+2026-08-27,"Learn PHP",done,1
+2026-08-27,Review,done,2
+2026-08-27,Carsilvania,done,3
+2026-08-27,Exercise,done,4
+2026-08-27,Teeth,done,5
+2026-08-27,"Clean crib",done,6
+2026-08-27,"No alc",failed,7
+2026-08-27,"No smoke",failed,8
+2026-08-27,X,done,9
+2026-08-31,"Log 7hrs",done,0
+2026-08-31,"Learn PHP",done,1
+2026-08-31,Review,failed,2
+2026-08-31,Carsilvania,done,3
+2026-08-31,Exercise,failed,4
+2026-08-31,Teeth,done,5
+2026-08-31,Save,done,6
+2026-08-31,Invest,done,7
+2026-08-31,"No alc",failed,8
+2026-08-31,"No smoke",failed,9
+2026-08-31,X,done,10
+2026-09-01,"Log 7hrs",done,0
+2026-09-01,"Learn PHP",done,1
+2026-09-01,Carsilvania,done,2
+2026-09-01,Review,done,3
+2026-09-01,Exercise,done,4
+2026-09-01,Teeth,done,5
+2026-09-01,"No alc",failed,6
+2026-09-01,"No smoke",done,7
+2026-09-01,X,done,8
+2026-09-02,"Log 7hrs",failed,0
+2026-09-02,"Learn PHP",done,1
+2026-09-02,Carsilvania,done,2
+2026-09-02,Review,failed,3
+2026-09-02,Exercise,failed,4
+2026-09-02,Teeth,done,5
+2026-09-02,"No alc",failed,6
+2026-09-02,"No smoke",done,7
+2026-09-02,Invest,done,8
+2026-09-02,Save,done,9
+2026-09-02,X,done,10
+2026-09-03,"Log 7hrs",done,0
+2026-09-03,Review,failed,1
+2026-09-03,"Learn PHP",done,2
+2026-09-03,Carsilvania,done,3
+2026-09-03,Invest,done,4
+2026-09-03,Save,done,5
+2026-09-03,Teeth,done,6
+2026-09-03,Exercise,done,7
+2026-09-03,"No alc",failed,8
+2026-09-03,"No smoke",done,9
+2026-09-03,X,done,10
+2026-09-04,"Log 7hrs",failed,0
+2026-09-04,Review,failed,1
+2026-09-04,"Learn PHP",done,2
+2026-09-04,Carsilvania,failed,3
+2026-09-04,Exercise,failed,4
+2026-09-04,Teeth,done,5
+2026-09-04,"No alc",failed,6
+2026-09-04,"No smoke",done,7
+2026-09-04,Save,done,8
+2026-09-04,Invest,done,9
+2026-09-04,X,done,10
+2026-09-07,"Log 7hrs",done,0
+2026-09-07,"Learn PHP",done,1
+2026-09-07,Review,done,2
+2026-09-07,Carsilvania,done,3
+2026-09-07,Exercise,done,4
+2026-09-07,Invest,done,5
+2026-09-07,Save,done,6
+2026-09-07,Teeth,failed,7
+2026-09-07,"No alc",done,8
+2026-09-07,"No smoke",done,9
+2026-09-07,X,done,10
+2026-09-08,"Log 7hrs",done,0
+2026-09-08,"Learn PHP",done,1
+2026-09-08,Review,failed,2
+2026-09-08,Carsilvania,done,3
+2026-09-08,Exercise,done,4
+2026-09-08,Teeth,done,5
+2026-09-08,"No alc",done,6
+2026-09-08,"No smoke",done,7
+2026-09-08,X,done,8
+2026-09-09,"Log 7hrs",done,0
+2026-09-09,"Learn PHP",failed,1
+2026-09-09,Review,done,2
+2026-09-09,Carsilvania,failed,3
+2026-09-09,Exercise,failed,4
+2026-09-09,Math,failed,5
+2026-09-09,Teeth,done,6
+2026-09-09,"No alc",done,7
+2026-09-09,"No smoke",done,8
+2026-09-09,X,done,9
+2026-09-10,"Log 7hrs",done,0
+2026-09-10,Review,done,1
+2026-09-10,"Learn PHP",done,2
+2026-09-10,Carsilvania,failed,3
+2026-09-10,Math,done,4
+2026-09-10,Exercise,failed,5
+2026-09-10,Teeth,done,6
+2026-09-10,"No alc",done,7
+2026-09-10,"No smoke",done,8
+2026-09-10,Invest,done,9
+2026-09-10,Save,done,10
+2026-09-10,X,failed,11
+2026-09-11,"Log 7hrs",done,0
+2026-09-11,"Learn PHP",done,1
+2026-09-11,Review,done,2
+2026-09-11,Carsilvania,failed,3
+2026-09-11,Math,done,4
+2026-09-11,Exercise,failed,5
+2026-09-11,Save,done,6
+2026-09-11,Invest,done,7
+2026-09-11,Teeth,done,8
+2026-09-11,"No alc",done,9
+2026-09-11,"No smoke",done,10
+2026-09-11,X,done,11
+2026-09-14,"Log 7hrs",done,0
+2026-09-14,"Learn PHP",done,1
+2026-09-14,Review,done,2
+2026-09-14,Carsilvania,failed,3
+2026-09-14,Exercise,failed,4
+2026-09-14,Invest,done,5
+2026-09-14,Save,done,6
+2026-09-14,Teeth,failed,7
+2026-09-14,"No alc",done,8
+2026-09-14,"No smoke",done,9
+2026-09-14,X,failed,10
+2026-09-15,"Log 7hrs",done,0
+2026-09-15,"Learn PHP",done,1
+2026-09-15,Review,done,2
+2026-09-15,Carsilvania,failed,3
+2026-09-15,Exercise,done,4
+2026-09-15,Invest,done,5
+2026-09-15,Save,done,6
+2026-09-15,Teeth,done,7
+2026-09-15,Math,failed,8
+2026-09-15,"No alc",done,9
+2026-09-15,"No smoke",done,10
+2026-09-15,X,failed,11

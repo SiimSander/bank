@@ -1,0 +1,371 @@
+entry_date,type,method,amount,note
+2026-07-01,pension,card,688.62,"Opening balance"
+2026-07-15,pension,card,156.68,
+2026-08-01,expenses,card,171,Tristan
+2026-08-01,expenses,card,80,Aurelius
+2026-08-01,expenses,card,35,Jasper
+2026-08-01,income,card,200,Coach
+2026-08-02,expenses,card,39,Aurelius
+2026-08-02,expenses,card,10,Jasper
+2026-08-03,income,card,250,Weekly
+2026-08-03,expenses,card,200,Coach
+2026-08-03,expenses,card,0.91,Kogumiskonto
+2026-08-03,wallet_adjustment,card,61.39,
+2026-08-03,expenses,card,10,Kirke
+2026-08-03,expenses,card,7.5,Bolt
+2026-08-03,expenses,card,16,"Muay thai"
+2026-08-03,investments,card,92.77,"S&P 500"
+2026-08-03,income,card,75.98,"Lightyear Adjustment"
+2026-08-04,income,card,25,Poker
+2026-08-04,expenses,card,7,Lunch
+2026-08-04,expenses,card,8,Olerex
+2026-08-04,expenses,card,23,Bolt
+2026-08-04,expenses,card,19,Citybee
+2026-08-04,expenses,card,19,Coop
+2026-08-04,income,card,50,Coach
+2026-08-04,expenses,card,30,Prisma
+2026-08-04,expenses,card,8,Citybee
+2026-08-05,expenses,card,8,Bolt
+2026-08-05,expenses,card,8,Lunch
+2026-08-05,income,card,2108.99,Scoro
+2026-08-05,expenses,card,900,"Crib rent"
+2026-08-05,expenses,card,300,Poker
+2026-08-05,investments,card,405.59,"S&P 500"
+2026-08-05,investments,card,194.41,Wise
+2026-08-05,expenses,card,0.4,Kogumiskonto
+2026-08-05,expenses,card,50,Coach
+2026-08-05,expenses,card,5,Bolt
+2026-08-05,expenses,card,16,"Muay thai"
+2026-08-05,expenses,card,9,Olerex
+2026-08-05,expenses,card,30,Coop
+2026-08-05,expenses,card,3.6,"Lightyear tax"
+2026-08-06,expenses,card,4,Citybee
+2026-08-06,expenses,card,5.3,"Bye-Paju gift (Scoro)"
+2026-08-06,expenses,card,8,Lunch
+2026-08-06,income,card,100,Poker
+2026-08-06,expenses,card,9,Bolt
+2026-08-06,expenses,card,3,Coop
+2026-08-07,expenses,card,5,Bolt
+2026-08-07,expenses,card,8,Lunch
+2026-08-07,income,card,50,Mai
+2026-08-07,expenses,card,30,Koeratoit
+2026-08-07,expenses,card,38,"Bolt food"
+2026-08-07,expenses,card,44,Coop
+2026-08-08,expenses,card,7,Olerex
+2026-08-08,expenses,card,15,McDonalds
+2026-08-08,expenses,card,22,Coop
+2026-08-08,expenses,card,24,Rimi
+2026-08-08,income,cash,20,Poker
+2026-08-09,expenses,card,4,Maksis
+2026-08-09,expenses,card,26,Cityalko
+2026-08-09,expenses,card,26,Sportsdirect
+2026-08-09,expenses,card,7,Blender
+2026-08-10,expenses,card,13,FLY.IO
+2026-08-10,income,card,250,Weekly
+2026-08-10,investments,card,25,"S&P 500"
+2026-08-10,income,card,24.9,Kogumiskonto
+2026-08-10,expenses,card,0.85,Kogumiskonto
+2026-08-10,expenses,card,0.15,"Lightyear tax"
+2026-08-10,expenses,card,8,Lunch
+2026-08-10,expenses,card,5,"LHV kaart"
+2026-08-10,expenses,card,13,Olerex
+2026-08-10,expenses,card,46,"Elamus bowling"
+2026-08-10,income,card,38.17,Scoro
+2026-08-11,expenses,card,25,Lunch
+2026-08-11,expenses,card,20,Poker
+2026-08-11,expenses,card,14,"Scoro trivia"
+2026-08-11,expenses,card,37,"Bolt food"
+2026-08-12,expenses,card,14,Lunch
+2026-08-13,expenses,card,10,"Disney Plus"
+2026-08-13,expenses,card,25,Cityalko
+2026-08-13,expenses,card,15,"Bolt food"
+2026-08-13,expenses,card,17,Citybee
+2026-08-14,expenses,card,7,Citybee
+2026-08-14,expenses,card,8,Coop
+2026-08-14,pension,card,181.78,
+2026-08-15,expenses,card,8,Bolt
+2026-08-16,expenses,card,10,Kogumiskonto
+2026-08-16,income,card,250,"Makse (Jyrx)"
+2026-08-16,expenses,card,8,Olerex
+2026-08-16,expenses,card,30,Medikinet
+2026-08-16,expenses,card,25,Prisma
+2026-08-16,expenses,card,34,SKYMOBILE
+2026-08-16,expenses,card,30,"XS mänguasjad"
+2026-08-16,expenses,card,10,Hesburger
+2026-08-16,expenses,card,8,Citybee
+2026-08-16,expenses,card,40,Coop
+2026-08-17,income,card,250,Weekly
+2026-08-17,expenses,card,7,Citybee
+2026-08-17,income,card,27.19,Kogumiskonto
+2026-08-17,investments,card,30,"S&P 500"
+2026-08-17,expenses,card,0.18,"Lightyear tax"
+2026-08-17,expenses,card,0.82,Kogumiskonto
+2026-08-17,expenses,card,200,Coach
+2026-08-17,expenses,cash,20,"Bolt taxi driver for bringing airpods"
+2026-08-17,expenses,card,12,Bolt
+2026-08-17,expenses,card,35,Coop
+2026-08-17,expenses,card,10,Reeli
+2026-08-17,expenses,card,1,Kogumiskonto
+2026-08-18,expenses,card,8,Citybee
+2026-08-18,wallet_adjustment,card,135,
+2026-08-18,expenses,card,9,Lunch
+2026-08-18,expenses,card,13,Olerex
+2026-08-18,expenses,card,7,Bolt
+2026-08-18,expenses,card,25,"Alex (laen)"
+2026-08-18,expenses,card,30,Coop
+2026-08-18,expenses,card,3,Bolt
+2026-08-19,expenses,card,6,Citybee
+2026-08-19,income,card,25,Poker
+2026-08-19,expenses,card,9,Lunch
+2026-08-19,income,card,240,Mai
+2026-08-19,savings,card,39.75,
+2026-08-19,investments,card,67,"S&P 500"
+2026-08-19,expenses,card,0.41,"Lightyear tax"
+2026-08-19,expenses,card,0.59,Kogumiskonto
+2026-08-19,expenses,card,7,Bolt
+2026-08-20,expenses,card,11,Terminal
+2026-08-20,expenses,card,10,"Mats laen"
+2026-08-20,expenses,card,44,"Steffani Pizza"
+2026-08-20,expenses,card,36,"Tervise paradiis"
+2026-08-21,expenses,card,10,"Tervise paradiis"
+2026-08-21,expenses,card,25,"D3 pilet"
+2026-08-21,income,card,250,Jyrx
+2026-08-22,expenses,card,45,D3
+2026-08-22,expenses,card,36,Bolt
+2026-08-22,expenses,card,31,Coop
+2026-08-22,expenses,card,26,"Bolt food"
+2026-08-22,expenses,card,18,Kingpool
+2026-08-22,expenses,card,3,Kogumiskonto
+2026-08-23,expenses,card,50,"Alex laen"
+2026-08-23,expenses,card,28,Coop
+2026-08-23,expenses,card,7,Olerex
+2026-08-23,expenses,card,5,Poker
+2026-08-24,expenses,card,7,Citybee
+2026-08-24,income,card,27,Kogumiskonto
+2026-08-24,investments,card,60,"S&P 500"
+2026-08-24,expenses,card,0.36,"Lightyear tax"
+2026-08-24,expenses,card,1.64,Kogumiskonto
+2026-08-24,savings,card,29.5,
+2026-08-24,income,card,150,Mai
+2026-08-24,expenses,card,9,Lunch
+2026-08-24,expenses,card,7,Citybee
+2026-08-24,expenses,card,53,Coop
+2026-08-25,expenses,card,70,"Arnelli baar"
+2026-08-25,income,card,250,Weekly
+2026-08-25,expenses,card,5,Pepco
+2026-08-25,expenses,card,18,Prisma
+2026-08-25,expenses,card,6,Olerex
+2026-08-25,income,cash,20,"Staked Jasper Casino"
+2026-08-25,income,card,100,"Staked Jasper Casino"
+2026-08-25,savings,card,55.5,
+2026-08-25,investments,card,93,"S&P 500"
+2026-08-25,expenses,card,0.56,"Lightyear tax"
+2026-08-25,expenses,card,0.44,Kogumiskonto
+2026-08-25,expenses,card,10,"Circle K"
+2026-08-25,expenses,card,18,McDonalds
+2026-08-26,expenses,card,7,Citybee
+2026-08-26,expenses,card,9,Lunch
+2026-08-26,expenses,card,18,Citybee
+2026-08-26,expenses,card,30,Coop
+2026-08-27,expenses,card,10,KRC
+2026-08-27,expenses,card,7,Citybee
+2026-08-27,expenses,card,8,Lunch
+2026-08-27,expenses,card,11,Citybee
+2026-08-27,expenses,card,28,Juuksur
+2026-08-27,expenses,card,33,"Urbi kink"
+2026-08-27,expenses,card,73,Coop
+2026-08-27,expenses,card,31,Prisma
+2026-08-27,income,card,250,Jyrx
+2026-08-27,income,card,50,Mai
+2026-08-28,expenses,card,32,Bolt
+2026-08-28,expenses,card,18,LuxExpress
+2026-08-28,expenses,card,90,"Vova kook&baar"
+2026-08-28,expenses,card,7,Olerex
+2026-08-28,expenses,card,90,Prisma
+2026-08-28,income,card,200,Jyrx
+2026-08-29,expenses,card,4,Kauplus
+2026-08-29,expenses,card,11,Baar
+2026-08-29,expenses,card,24,Shaurma
+2026-08-29,expenses,card,13,Bolt
+2026-08-29,expenses,card,12,Coop
+2026-08-29,expenses,card,6,Autopesu
+2026-08-29,expenses,card,7,Olerex
+2026-08-29,expenses,card,201,CityAlko
+2026-08-29,expenses,card,153,"Synna prep"
+2026-08-29,income,card,300,Jyrx
+2026-08-29,income,card,25,Poker
+2026-08-29,expenses,card,1.74,Kogumiskonto
+2026-08-29,income,card,100,Synna
+2026-08-30,expenses,card,20,Jasper
+2026-08-30,expenses,card,23,"Circle K"
+2026-08-30,expenses,card,48,McDonalds
+2026-08-30,expenses,card,8,Coop
+2026-08-30,expenses,card,5,Bolt
+2026-08-30,expenses,card,47,"Bolt food"
+2026-08-30,expenses,card,18,Coop
+2026-08-30,expenses,card,34,Prisma
+2026-08-30,expenses,card,21,Prisma
+2026-08-30,expenses,card,27,"Bolt food"
+2026-08-30,income,card,100,Urb
+2026-08-30,income,card,43.29,Kogumiskonto
+2026-08-31,expenses,card,6,Citybee
+2026-08-31,income,card,250,Weekly
+2026-08-31,savings,card,37.5,
+2026-08-31,investments,card,62.5,"S&P 500"
+2026-08-31,expenses,card,0.38,"Lightyear tax"
+2026-08-31,expenses,card,0.12,Kogumiskonto
+2026-08-31,expenses,card,8,Lunch
+2026-08-31,expenses,card,8,Citybee
+2026-08-31,expenses,card,17,Coop
+2026-09-01,expenses,card,7,Olerex
+2026-09-01,expenses,card,8,Citybee
+2026-09-01,expenses,card,8,Lunch
+2026-09-01,expenses,card,8,"Tallinna spordihall"
+2026-09-01,expenses,card,28,Coop
+2026-09-01,expenses,card,11,Citybee
+2026-09-02,income,card,10.4,Kogumiskonto
+2026-09-02,expenses,card,13,Bolt
+2026-09-02,expenses,card,33,Prisma
+2026-09-02,income,card,27,Poker
+2026-09-02,income,card,250,Jyrx
+2026-09-02,investments,card,72,"S&P 500"
+2026-09-02,expenses,card,0.44,"Lightyear tax"
+2026-09-02,expenses,card,0.56,Kogumiskonto
+2026-09-02,expenses,card,7,Citybee
+2026-09-02,expenses,card,25,"Coach laen"
+2026-09-02,expenses,card,32,"Lulu baar"
+2026-09-02,expenses,card,69,"T1 Arcade"
+2026-09-02,savings,card,43.11,
+2026-09-03,income,card,15.63,Kogumiskonto
+2026-09-03,income,card,10,Poker
+2026-09-03,expenses,card,20,"Bolt food"
+2026-09-03,expenses,card,7,Citybee
+2026-09-03,income,card,50,Jyrx
+2026-09-03,expenses,card,7,Olerex
+2026-09-03,expenses,card,7,Citybee
+2026-09-03,savings,card,11.51,
+2026-09-03,income,card,1.11,"Other account"
+2026-09-03,investments,card,20,"S&P 500"
+2026-09-03,expenses,card,0.12,"Lightyear tax"
+2026-09-03,expenses,card,0.88,Kogumiskonto
+2026-09-03,expenses,card,17,Citybee
+2026-09-03,expenses,card,26,Coop
+2026-09-03,income,cash,5,Üür
+2026-09-04,expenses,card,7,Citybee
+2026-09-04,expenses,card,8,Lunch
+2026-09-04,income,card,2108.99,Scoro
+2026-09-04,expenses,card,920,Üür
+2026-09-04,expenses,card,50,Reeli
+2026-09-04,expenses,card,62.21,Telia
+2026-09-04,expenses,card,40,"Parking ticket"
+2026-09-04,savings,card,320,
+2026-09-04,expenses,card,3.6,"Lightyear tax"
+2026-09-04,expenses,card,0.4,Kogumiskonto
+2026-09-04,investments,card,298.66,Ethereum
+2026-09-04,investments,card,129.07,"Micron Technology"
+2026-09-04,investments,card,170.48,"S&P 500"
+2026-09-04,expenses,card,18,Coop
+2026-09-04,expenses,card,13,Mcdonalds
+2026-09-04,expenses,card,17,Coop
+2026-09-04,expenses,card,7,Olerex
+2026-09-04,income,card,6.94,Kogumiskonto
+2026-09-05,expenses,card,10,Bolt
+2026-09-05,expenses,card,95,"Hookah Palace"
+2026-09-05,expenses,card,14,Bolt
+2026-09-05,expenses,card,17,Coop
+2026-09-05,expenses,card,50,"Aux (laen)"
+2026-09-05,expenses,card,14,Coop
+2026-09-05,expenses,card,7,Olerex
+2026-09-05,income,card,5.85,Kogumiskonto
+2026-09-05,income,card,30,Poker
+2026-09-06,expenses,card,5,Bolt
+2026-09-06,expenses,card,5,Bolt
+2026-09-06,expenses,card,8,Olerex
+2026-09-06,expenses,card,8,"Tallinna spordihall"
+2026-09-06,expenses,card,2,Rimi
+2026-09-06,income,card,0.03,"Saving konto Intress"
+2026-09-06,expenses,card,1,Kogumiskonto
+2026-09-07,income,card,250,Weekly
+2026-09-07,savings,card,8.35,
+2026-09-07,investments,card,20,"S&P 500"
+2026-09-07,expenses,card,0.12,"Lightyear tax"
+2026-09-07,expenses,card,0.88,Kogumiskonto
+2026-09-07,expenses,card,9,Lunch
+2026-09-07,expenses,card,10,"Rain Praks gift"
+2026-09-07,expenses,card,3,Coop
+2026-09-07,expenses,card,5,"Teras Beach"
+2026-09-08,expenses,card,7,Olerex
+2026-09-08,expenses,cash,5,Pepco
+2026-09-08,income,card,7,Kogumiskonto
+2026-09-08,expenses,card,8,"Tallinna spordihall"
+2026-09-08,income,card,39.53,"Coop stock"
+2026-09-08,savings,card,0.53,
+2026-09-08,pension,card,2.34,
+2026-09-09,income,card,49.03,Scoro
+2026-09-09,savings,card,17.03,
+2026-09-09,investments,card,25,"S&P 500"
+2026-09-09,expenses,card,0.15,"Lightyear tax"
+2026-09-09,expenses,card,0.85,Kogumiskonto
+2026-09-09,expenses,card,17,"Bolt food"
+2026-09-09,expenses,card,12,"Bolt food"
+2026-09-09,expenses,cash,20,Reeli
+2026-09-10,expenses,card,8,Olerex
+2026-09-10,income,card,65,Poker
+2026-09-10,savings,card,10,
+2026-09-10,investments,card,20,"S&P 500"
+2026-09-10,expenses,card,0.12,"Lightyear tax"
+2026-09-10,expenses,card,0.88,Kogumiskonto
+2026-09-10,expenses,card,10,Olerex
+2026-09-10,expenses,card,11,"Bolt food"
+2026-09-10,expenses,cash,10,Reeli
+2026-09-11,income,cash,50,Poker
+2026-09-11,income,card,60,Poker
+2026-09-11,income,card,5.89,Kogumiskonto
+2026-09-11,expenses,card,9,"Bolt food"
+2026-09-11,expenses,card,7,Kingpool
+2026-09-11,expenses,card,9,Maxima
+2026-09-11,expenses,cash,10,Reeli
+2026-09-11,income,card,150,Poker
+2026-09-12,expenses,card,22,Rimi
+2026-09-12,expenses,card,3,Pepco
+2026-09-12,expenses,card,13,Olerex
+2026-09-12,savings,card,80.89,
+2026-09-12,investments,card,121,"S&P 500"
+2026-09-12,expenses,card,0.64,"Lightyear tax"
+2026-09-12,expenses,card,0.36,Kogumiskonto
+2026-09-12,income,card,60,Poker
+2026-09-12,expenses,card,0.09,"Lightyear tax"
+2026-09-12,expenses,card,0.91,Kogumiskonto
+2026-09-12,expenses,card,13,"Bolt food"
+2026-09-13,expenses,card,13,"Bolt food"
+2026-09-13,income,card,50,Mai
+2026-09-13,savings,card,8,
+2026-09-13,expenses,card,0.08,"Lightyear tax"
+2026-09-13,expenses,card,0.92,Kogumiskonto
+2026-09-13,investments,card,13,"S&P 500"
+2026-09-13,expenses,card,15,Coop
+2026-09-13,expenses,card,8,Bolt
+2026-09-13,expenses,card,10,"Disney Plus"
+2026-09-14,income,card,250,Weekly
+2026-09-14,expenses,card,0.39,"Lightyear tax"
+2026-09-14,expenses,card,1.61,Kogumiskonto
+2026-09-14,investments,card,2.84,"S&P 500"
+2026-09-14,investments,card,59.8,"Infortar AS"
+2026-09-14,savings,card,38,
+2026-09-14,investments,card,2.36,Ethereum
+2026-09-14,expenses,card,20,Reeli
+2026-09-14,expenses,card,25,"Bolt food"
+2026-09-14,expenses,card,5,Prisma
+2026-09-14,expenses,card,13,Olerex
+2026-09-14,expenses,card,24,Adixemin
+2026-09-14,expenses,card,8,Citybee
+2026-09-14,income,cash,20,Reeli
+2026-09-15,savings,card,5,
+2026-09-15,income,card,500,"Synna kink"
+2026-09-15,savings,card,75,
+2026-09-15,expenses,card,2.55,"Lightyear tax"
+2026-09-15,expenses,card,0.45,Kogumiskonto
+2026-09-15,investments,card,125,Ethereum
+2026-09-15,investments,card,278.31,Wise
+2026-09-15,investments,card,21.69,"S&P 500"
+2026-09-15,expenses,card,8,Lunch
