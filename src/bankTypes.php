@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/BankRequestCache.php';
 require_once __DIR__ . '/Clock.php';
 require_once __DIR__ . '/typeIncomePercentHistory.php';
 require_once __DIR__ . '/goalCalculations.php';
@@ -73,25 +74,40 @@ function systemBankTypeDefinitions(): array {
 }
 
 function getBankTypes(PDO $pdo, int $accountId, bool $activeOnly = false): array {
-	ensureBankTypesSeeded($pdo, $accountId);
+	return BankRequestCache::remember(
+		'bank_types:' . $accountId . ':' . ($activeOnly ? 'active' : 'all'),
+		function () use ($pdo, $accountId, $activeOnly): array {
+			ensureBankTypesSeeded($pdo, $accountId);
 
-	$sql = 'SELECT id, slug, label, color_hex, income_percent, goal_income_from, created_at, balance_mode, is_active, is_system, show_in_pills, sort_order
-		FROM bank_entry_types
-		WHERE account_id = ?';
+			$sql = 'SELECT id, slug, label, color_hex, income_percent, goal_income_from, created_at, balance_mode, is_active, is_system, show_in_pills, sort_order
+				FROM bank_entry_types
+				WHERE account_id = ?';
 
-	if ($activeOnly) {
-		$sql .= ' AND is_active = 1';
-	}
+			if ($activeOnly) {
+				$sql .= ' AND is_active = 1';
+			}
 
-	$sql .= ' ORDER BY sort_order ASC, label ASC';
+			$sql .= ' ORDER BY sort_order ASC, label ASC';
 
-	$statement = $pdo->prepare($sql);
-	$statement->execute([$accountId]);
+			$statement = $pdo->prepare($sql);
+			$statement->execute([$accountId]);
 
-	return array_map('normalizeBankTypeRow', $statement->fetchAll());
+			return array_map('normalizeBankTypeRow', $statement->fetchAll());
+		}
+	);
 }
 
 function getBankTypeBySlug(PDO $pdo, int $accountId, string $slug): ?array {
+	if (BankRequestCache::isEnabled()) {
+		foreach (getBankTypes($pdo, $accountId) as $type) {
+			if ($type['slug'] === $slug) {
+				return $type;
+			}
+		}
+
+		return null;
+	}
+
 	ensureBankTypesSeeded($pdo, $accountId);
 
 	$statement = $pdo->prepare(
