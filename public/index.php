@@ -76,7 +76,8 @@ switch ($uri) {
 		$checks = [
 			'status' => 'ok',
 			'database' => 'ok',
-			'log_writable' => is_writable(dirname(AppConfig::resolvePath(AppConfig::get('LOG_PATH', 'storage/logs/app.log') ?? 'storage/logs/app.log'))),
+			'log_writable' => filter_var(AppConfig::get('LOG_TO_STDERR', 'false'), FILTER_VALIDATE_BOOLEAN)
+				|| is_writable(dirname(AppConfig::resolvePath(AppConfig::get('LOG_PATH', 'storage/logs/app.log') ?? 'storage/logs/app.log'))),
 		];
 
 		try {
