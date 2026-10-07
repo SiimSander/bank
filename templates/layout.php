@@ -44,6 +44,7 @@ if (isset($_SESSION['flash'])) {
 	<meta name="csrf-token" content="<?php echo htmlspecialchars(csrfToken()); ?>">
 	<title><?php echo htmlspecialchars($pageTitle); ?></title>
 	<link rel="stylesheet" href="/assets/css/index.css">
+	<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 	<?php if ($flashMessage !== null): ?>
