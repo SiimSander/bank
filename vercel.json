@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.9.0",
+      "maxDuration": 30,
+      "excludeFiles": "{tests/**,docs/**,playground/**,exports/**,bin/**,storage/**,secrets/**}"
+    }
+  },
+  "routes": [
+    { "src": "/(.*)", "dest": "/api/index.php" }
+  ]
+}
