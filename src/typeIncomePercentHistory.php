@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/BankRequestCache.php';
 require_once __DIR__ . '/Clock.php';
 
 function recordIncomePercentSegment(PDO $pdo, int $bankEntryTypeId, string $effectiveFrom, float $incomePercent): void {
@@ -32,36 +33,51 @@ function ensureInitialIncomePercentSegment(PDO $pdo, array $type): void {
 	recordIncomePercentSegment($pdo, (int) $type['id'], $effectiveFrom, (float) $type['income_percent']);
 }
 
+/**
+ * @return array<int, array{effective_from: string, income_percent: float}> oldest segment first
+ */
+function getIncomePercentSegments(PDO $pdo, int $bankEntryTypeId): array {
+	return BankRequestCache::remember(
+		'income_percent_segments:' . $bankEntryTypeId,
+		function () use ($pdo, $bankEntryTypeId): array {
+			$statement = $pdo->prepare(
+				'SELECT effective_from, income_percent
+				FROM bank_entry_type_income_percent_history
+				WHERE bank_entry_type_id = ?
+				ORDER BY effective_from ASC'
+			);
+			$statement->execute([$bankEntryTypeId]);
+
+			return array_map(
+				fn(array $row) => [
+					'effective_from' => (string) $row['effective_from'],
+					'income_percent' => (float) $row['income_percent'],
+				],
+				$statement->fetchAll()
+			);
+		}
+	);
+}
+
 function getIncomePercentEffectiveOnDate(PDO $pdo, int $bankEntryTypeId, string $date, ?float $fallbackPercent = null): ?float {
-	$statement = $pdo->prepare(
-		'SELECT income_percent
-		FROM bank_entry_type_income_percent_history
-		WHERE bank_entry_type_id = ?
-			AND effective_from <= ?
-		ORDER BY effective_from DESC
-		LIMIT 1'
-	);
-	$statement->execute([$bankEntryTypeId, $date]);
-	$row = $statement->fetchColumn();
+	$segments = getIncomePercentSegments($pdo, $bankEntryTypeId);
 
-	if ($row !== false) {
-		return (float) $row;
+	if ($segments === []) {
+		return $fallbackPercent;
 	}
 
-	$earliest = $pdo->prepare(
-		'SELECT effective_from FROM bank_entry_type_income_percent_history
-		WHERE bank_entry_type_id = ?
-		ORDER BY effective_from ASC
-		LIMIT 1'
-	);
-	$earliest->execute([$bankEntryTypeId]);
-	$earliestFrom = $earliest->fetchColumn();
+	$effectivePercent = null;
 
-	if ($earliestFrom !== false && $date < $earliestFrom) {
-		return null;
+	foreach ($segments as $segment) {
+		if ($segment['effective_from'] > $date) {
+			break;
+		}
+
+		$effectivePercent = $segment['income_percent'];
 	}
 
-	return $fallbackPercent;
+	// Dates before the first recorded segment have no percent, so null is correct there.
+	return $effectivePercent;
 }
 
 function recordIncomePercentChangeIfNeeded(
