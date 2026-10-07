@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/BankRequestCache.php';
 require_once __DIR__ . '/Clock.php';
 require_once __DIR__ . '/typeIncomePercentHistory.php';
 
@@ -32,7 +33,76 @@ function isPlanDefaultGoalType(array $type): bool {
 	return in_array($type['slug'], ['expenses', 'savings', 'investments'], true);
 }
 
+/**
+ * @return array<string, true> keys are "<type slug>|<first day of month>"
+ */
+function getTypeMonthsWithEntries(PDO $pdo, int $userId): array {
+	return BankRequestCache::remember(
+		'type_months_with_entries:' . $userId,
+		function () use ($pdo, $userId): array {
+			$statement = $pdo->prepare(
+				"SELECT DISTINCT type, DATE_FORMAT(entry_date, '%Y-%m-01') AS entry_month
+				FROM bank_entries
+				WHERE account_id = ?"
+			);
+			$statement->execute([$userId]);
+
+			$typeMonths = [];
+			foreach ($statement->fetchAll() as $row) {
+				$typeMonths[$row['type'] . '|' . $row['entry_month']] = true;
+			}
+
+			return $typeMonths;
+		}
+	);
+}
+
+/**
+ * @return array<int, array{entry_date: string, amount: string|float|int}> oldest first
+ */
+function getIncomeEntriesBetween(PDO $pdo, int $userId, string $startDate, string $endDate): array {
+	if (!BankRequestCache::isEnabled()) {
+		$statement = $pdo->prepare(
+			"SELECT entry_date, amount
+			FROM bank_entries
+			WHERE account_id = ?
+				AND type = 'income'
+				AND entry_date >= ?
+				AND entry_date <= ?
+			ORDER BY entry_date ASC, id ASC"
+		);
+		$statement->execute([$userId, $startDate, $endDate]);
+
+		return $statement->fetchAll();
+	}
+
+	$allIncomeEntries = BankRequestCache::remember(
+		'income_entries:' . $userId,
+		function () use ($pdo, $userId): array {
+			$statement = $pdo->prepare(
+				"SELECT entry_date, amount
+				FROM bank_entries
+				WHERE account_id = ?
+					AND type = 'income'
+				ORDER BY entry_date ASC, id ASC"
+			);
+			$statement->execute([$userId]);
+
+			return $statement->fetchAll();
+		}
+	);
+
+	return array_values(array_filter(
+		$allIncomeEntries,
+		fn(array $row) => $row['entry_date'] >= $startDate && $row['entry_date'] <= $endDate
+	));
+}
+
 function typeHasEntriesInMonth(PDO $pdo, int $userId, string $slug, string $statMonth): bool {
+	if (BankRequestCache::isEnabled() && $statMonth === date('Y-m-01', strtotime($statMonth))) {
+		return isset(getTypeMonthsWithEntries($pdo, $userId)[$slug . '|' . $statMonth]);
+	}
+
 	$monthEnd = date('Y-m-t', strtotime($statMonth));
 	$statement = $pdo->prepare(
 		'SELECT 1
@@ -170,21 +240,10 @@ function sumGoalIncomeWeightedByPercent(
 		return 0.0;
 	}
 
-	$statement = $pdo->prepare(
-		"SELECT entry_date, amount
-		FROM bank_entries
-		WHERE account_id = ?
-			AND type = 'income'
-			AND entry_date >= ?
-			AND entry_date <= ?
-		ORDER BY entry_date ASC, id ASC"
-	);
-	$statement->execute([$userId, $startDate, $periodEnd]);
-
 	$total = 0.0;
 	$fallbackPercent = (float) $type['income_percent'];
 
-	foreach ($statement->fetchAll() as $row) {
+	foreach (getIncomeEntriesBetween($pdo, $userId, $startDate, $periodEnd) as $row) {
 		$entryDate = $row['entry_date'];
 
 		if ($forTrackedMonthlyGoal) {
