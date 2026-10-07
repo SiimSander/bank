@@ -11,8 +11,11 @@ final class Logger {
 	private string $logPath;
 	private int $minLevel;
 
-	public function __construct(string $logPath, string $minLevel = 'warning') {
+	private bool $toStderr;
+
+	public function __construct(string $logPath, string $minLevel = 'warning', bool $toStderr = false) {
 		$this->logPath = $logPath;
+		$this->toStderr = $toStderr;
 		$this->minLevel = self::LEVELS[$minLevel] ?? self::LEVELS['warning'];
 	}
 
@@ -39,13 +42,6 @@ final class Logger {
 			return;
 		}
 
-		$dir = dirname($this->logPath);
-		if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
-			error_log("Logger: could not create log directory {$dir}");
-
-			return;
-		}
-
 		$entry = json_encode([
 			'time' => gmdate('c'),
 			'level' => $level,
@@ -56,6 +52,19 @@ final class Logger {
 
 		if ($entry === false) {
 			error_log("Logger: failed to encode log entry for channel {$channel}");
+
+			return;
+		}
+
+		if ($this->toStderr) {
+			error_log($entry);
+
+			return;
+		}
+
+		$dir = dirname($this->logPath);
+		if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
+			error_log("Logger: could not create log directory {$dir}");
 
 			return;
 		}
@@ -107,7 +116,8 @@ function logger(): ?Logger {
 		AppConfig::load();
 		$logPath = AppConfig::resolvePath(AppConfig::get('LOG_PATH', 'storage/logs/app.log') ?? 'storage/logs/app.log');
 		$logLevel = AppConfig::get('LOG_LEVEL', 'warning') ?? 'warning';
-		$instance = new Logger($logPath, $logLevel);
+		$toStderr = filter_var(AppConfig::get('LOG_TO_STDERR', 'false'), FILTER_VALIDATE_BOOLEAN);
+		$instance = new Logger($logPath, $logLevel, $toStderr);
 	} catch (Throwable $e) {
 		error_log('Logger bootstrap failed: ' . $e->getMessage());
 
