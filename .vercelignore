@@ -1,0 +1,13 @@
+/vendor
+/.idea
+/.git
+/.phpunit.cache
+/composer.phar
+/.env
+/secrets
+/storage
+/exports
+/playground
+/tests
+/docs
+/.DS_Store
