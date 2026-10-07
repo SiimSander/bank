@@ -37,7 +37,12 @@ function dbSslOptions(): array {
 		throw new RuntimeException('DB_SSL is enabled but no CA bundle was found. Set DB_SSL_CA or DB_SSL_CA_PEM.');
 	}
 
-	return [PDO::MYSQL_ATTR_SSL_CA => $caPath];
+	// PDO::MYSQL_ATTR_SSL_CA is deprecated since PHP 8.5 and would print a notice into page output.
+	$sslCaAttribute = class_exists(\Pdo\Mysql::class)
+		? \Pdo\Mysql::ATTR_SSL_CA
+		: PDO::MYSQL_ATTR_SSL_CA;
+
+	return [$sslCaAttribute => $caPath];
 }
 
 function db(): PDO {
