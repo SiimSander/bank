@@ -23,7 +23,20 @@ function initSecureSession(): void {
 	ini_set('session.cookie_httponly', '1');
 	ini_set('session.gc_maxlifetime', '7200');
 
+	if (sessionDriver() === 'database') {
+		require_once __DIR__ . '/DatabaseSessionHandler.php';
+		session_set_save_handler(new DatabaseSessionHandler(), true);
+	}
+
 	session_start();
+}
+
+function sessionDriver(): string {
+	AppConfig::load();
+
+	$default = getenv('VERCEL') !== false ? 'database' : 'files';
+
+	return AppConfig::get('SESSION_DRIVER', $default) === 'database' ? 'database' : 'files';
 }
 
 function regenerateSessionOnLogin(): void {
