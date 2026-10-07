@@ -590,6 +590,7 @@ switch ($uri) {
 		$range = $dateRange['range'];
 
 		autoSyncMainLhvAccount($pdo, $_SESSION['user_id']);
+		BankRequestCache::enable();
 
 		$todayEntries = getTodayBankEntries($pdo, $_SESSION['user_id']);
 		$balance = getBankBalance($pdo, $_SESSION['user_id']);
@@ -633,6 +634,7 @@ switch ($uri) {
 			exit;
 		}
 		$pdo = db();
+		BankRequestCache::enable();
 		$pageTitle = 'Month History';
 		$bankTypes = getHistoryDisplayTypes($pdo, $_SESSION['user_id']);
 		$statsHistory = getMonthlyStatsHistory($pdo, $_SESSION['user_id']);
