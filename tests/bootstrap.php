@@ -31,7 +31,8 @@ require_once dirname(__DIR__) . '/src/account.php';
 require_once dirname(__DIR__) . '/src/legal.php';
 require_once dirname(__DIR__) . '/src/legalContent.php';
 require_once dirname(__DIR__) . '/src/compoundInterest.php';
-require_once dirname(__DIR__) . '/src/wins.php';
+require_once dirname(__DIR__) . '/src/habits.php';
+require_once dirname(__DIR__) . '/src/habitChart.php';
 require_once dirname(__DIR__) . '/src/plans.php';
 require_once dirname(__DIR__) . '/src/cssBundle.php';
 
