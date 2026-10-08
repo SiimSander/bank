@@ -73,21 +73,24 @@ function buildAccountExport(PDO $pdo, int $accountId): ?array {
 	);
 	$entries->execute([$accountId]);
 
-	$winCards = $pdo->prepare(
-		'SELECT id, card_date, created_at FROM win_cards WHERE account_id = ? ORDER BY card_date ASC'
+	$habits = $pdo->prepare(
+		'SELECT id, title, position, created_date, archived_from_month, created_at FROM habits WHERE account_id = ? ORDER BY position ASC, id ASC'
 	);
-	$winCards->execute([$accountId]);
-	$winCardsData = [];
+	$habits->execute([$accountId]);
+	$habitsData = [];
 
-	foreach ($winCards->fetchAll() as $card) {
-		$items = $pdo->prepare(
-			'SELECT title, status, position, updated_at FROM win_card_items WHERE card_id = ? ORDER BY position ASC'
+	foreach ($habits->fetchAll() as $habit) {
+		$logs = $pdo->prepare(
+			'SELECT log_date, status, updated_at FROM habit_logs WHERE habit_id = ? ORDER BY log_date ASC'
 		);
-		$items->execute([(int) $card['id']]);
-		$winCardsData[] = [
-			'card_date' => $card['card_date'],
-			'created_at' => $card['created_at'],
-			'items' => $items->fetchAll(),
+		$logs->execute([(int) $habit['id']]);
+		$habitsData[] = [
+			'title' => $habit['title'],
+			'position' => (int) $habit['position'],
+			'created_date' => $habit['created_date'],
+			'archived_from_month' => $habit['archived_from_month'],
+			'created_at' => $habit['created_at'],
+			'logs' => $logs->fetchAll(),
 		];
 	}
 
@@ -150,7 +153,7 @@ function buildAccountExport(PDO $pdo, int $accountId): ?array {
 		],
 		'bank_entry_types' => $types->fetchAll(),
 		'bank_entries' => $entries->fetchAll(),
-		'win_cards' => $winCardsData,
+		'habits' => $habitsData,
 		'monthly_stats' => $monthlyStats->fetchAll(),
 		'monthly_stat_by_type' => $monthlyStatByType->fetchAll(),
 		'net_worth_snapshots' => $netWorth->fetchAll(),
@@ -180,12 +183,12 @@ function deleteAccount(PDO $pdo, int $accountId, string $password, string $usern
 
 	try {
 		$pdo->prepare(
-			'DELETE wci FROM win_card_items wci
-			INNER JOIN win_cards wc ON wc.id = wci.card_id
-			WHERE wc.account_id = ?'
+			'DELETE hl FROM habit_logs hl
+			INNER JOIN habits h ON h.id = hl.habit_id
+			WHERE h.account_id = ?'
 		)->execute([$accountId]);
 
-		$pdo->prepare('DELETE FROM win_cards WHERE account_id = ?')->execute([$accountId]);
+		$pdo->prepare('DELETE FROM habits WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM bank_entries WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM monthly_stat_by_type WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM monthly_stats WHERE account_id = ?')->execute([$accountId]);
