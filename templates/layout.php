@@ -43,7 +43,7 @@ if (isset($_SESSION['flash'])) {
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="csrf-token" content="<?php echo htmlspecialchars(csrfToken()); ?>">
 	<title><?php echo htmlspecialchars($pageTitle); ?></title>
-	<link rel="stylesheet" href="/assets/css/index.css">
+	<link rel="stylesheet" href="/styles?v=<?php echo cssBundleVersion(); ?>">
 </head>
 <body>
 	<?php if ($flashMessage !== null): ?>
