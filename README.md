@@ -6,6 +6,15 @@ Personal finance tracker with bank entries, goals, missing-goals catch-up, month
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full setup.
 
+## CSS structure
+
+Styles live in numbered files in `public/assets/css/` (`00-base.css`, `01-layout.css`, ...). The browser loads a single `/styles` request, which `public/index.php` assembles from the list in `src/cssBundle.php`. The URL is a top-level path without extension so it also works with `php -S` started without `public/router.php`.
+
+- The order in `cssBundleFiles()` is the cascade: later files override earlier ones with equal specificity. Do not reorder without checking the pages.
+- Add rules to the file that matches the page or component. A new file must be added to `cssBundleFiles()` (a test fails otherwise).
+- There is no `index.css` on disk; do not recreate it.
+- The stylesheet link carries a `?v=` hash of the bundle, so browsers cache it for a year and pick up every change automatically.
+
 ## Automated tests
 
 Money logic is covered by PHPUnit (goal targets, missing goals, monthly stats, net worth, LHV import mapping).
