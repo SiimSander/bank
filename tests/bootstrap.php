@@ -32,6 +32,7 @@ require_once dirname(__DIR__) . '/src/legal.php';
 require_once dirname(__DIR__) . '/src/legalContent.php';
 require_once dirname(__DIR__) . '/src/compoundInterest.php';
 require_once dirname(__DIR__) . '/src/wins.php';
+require_once dirname(__DIR__) . '/src/plans.php';
 
 AppConfig::overrideForTesting($testOverrides);
 dbReset();
