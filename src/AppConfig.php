@@ -263,7 +263,7 @@ final class AppConfig {
 		self::$values['TRUST_PROXY'] ??= 'false';
 		self::$values['MAIL_FROM_EMAIL'] ??= 'noreply@localhost.dev';
 		self::$values['MAIL_FROM_NAME'] ??= 'PhpLearn';
-		self::$values['APP_NAME'] ??= 'Wins & Bank';
+		self::$values['APP_NAME'] ??= 'The Vault';
 		self::$values['LEGAL_COUNTRY'] ??= 'EE';
 		self::$values['LEGAL_PRIVACY_VERSION'] ??= '2026-09-19';
 		self::$values['LEGAL_TERMS_VERSION'] ??= '2026-09-19';
