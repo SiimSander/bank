@@ -10,7 +10,7 @@ $isBankTypeRoute = preg_match('#^/bank/[a-z0-9_]+$#', $uri) === 1
 	&& !str_starts_with($uri, '/bank/lhv');
 
 $appRoutes = [
-	'/landing', '/wins', '/wins/history',
+	'/landing', '/habits', '/habits/history',
 	'/bank', '/bank/history', '/bank/configure', '/bank/lhv',
 	'/stock-goals',
 	'/calculator',
@@ -65,8 +65,8 @@ if (isset($_SESSION['flash'])) {
 		<script src="/assets/js/info-ring.js" defer></script>
 		<script src="/assets/js/app.js" defer></script>
 	<?php endif; ?>
-	<?php if ($uri === '/wins' || $uri === '/wins/history'): ?>
-		<script src="/assets/js/wins.js" defer></script>
+	<?php if ($uri === '/habits' || $uri === '/habits/history'): ?>
+		<script src="/assets/js/habits.js" defer></script>
 	<?php endif; ?>
 	<?php if ($loadBankJs): ?>
 		<script src="/assets/js/bank.js" defer></script>
