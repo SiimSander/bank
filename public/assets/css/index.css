@@ -664,6 +664,7 @@ a {
 }
 
 .bank-balance-card {
+	min-width: 0;
 	padding: 0.875rem 1rem;
 	background-color: var(--color-surface);
 	border-radius: var(--radius-card);
@@ -677,6 +678,7 @@ a {
 }
 
 .bank-balance-card__value {
+	overflow-wrap: anywhere;
 	font-size: 1.125rem;
 	font-weight: 600;
 }
@@ -2904,16 +2906,17 @@ input[type="number"]:focus {
 	margin-bottom: 1rem;
 }
 
+.plan-card {
+	min-width: 0;
+}
+
 .projection-card {
+	min-width: 0;
+	max-width: 100%;
 	padding: 0.625rem 0.875rem;
 	border-radius: var(--radius-card);
 	color: var(--type-color);
 	background-color: var(--type-bg);
-}
-
-.projection-card--unallocated {
-	color: var(--color-text-muted);
-	background-color: rgba(136, 136, 136, 0.12);
 }
 
 .projection-card__label {
@@ -2924,6 +2927,7 @@ input[type="number"]:focus {
 
 .projection-card__value {
 	display: block;
+	overflow-wrap: anywhere;
 	font-size: 1rem;
 	font-weight: 600;
 }
