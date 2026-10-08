@@ -50,8 +50,7 @@ final class BankRequestCacheTest extends DatabaseTestCase {
 	}
 
 	public function testDisableClearsStoredValues(): void {
-		$accountId = $this->createTestAccount();
-		$this->seedTypes($accountId);
+		$accountId = $this->createAccountWithGoalTypes();
 
 		BankRequestCache::enable();
 		self::assertContains('savings', array_column(getBankTypes($this->pdo, $accountId, true), 'slug'));
@@ -68,9 +67,31 @@ final class BankRequestCacheTest extends DatabaseTestCase {
 		self::assertNotContains('savings', array_column(getBankTypes($this->pdo, $accountId, true), 'slug'));
 	}
 
-	private function createManyMonthAccount(): int {
+	private function createAccountWithGoalTypes(): int {
 		$accountId = $this->createTestAccount();
 		$this->seedTypes($accountId);
+
+		$expenses = getBankTypeBySlug($this->pdo, $accountId, 'expenses');
+		updateBankType($this->pdo, $accountId, $expenses['id'], ['income_percent' => 0.6]);
+
+		foreach (['savings' => 'Savings', 'investments' => 'Investments'] as $slug => $label) {
+			if (getBankTypeBySlug($this->pdo, $accountId, $slug) === null) {
+				$result = createBankType($this->pdo, $accountId, [
+					'label' => $label,
+					'slug' => $slug,
+					'color_hex' => '#60a5fa',
+					'balance_mode' => 'pot',
+					'income_percent' => 0.2,
+				]);
+				self::assertTrue($result['success'], json_encode($result));
+			}
+		}
+
+		return $accountId;
+	}
+
+	private function createManyMonthAccount(): int {
+		$accountId = $this->createAccountWithGoalTypes();
 
 		foreach (['2026-04', '2026-05', '2026-06', '2026-07', '2026-08', '2026-09'] as $month) {
 			$this->addEntry($accountId, 'income', 1000.0, $month . '-03');
