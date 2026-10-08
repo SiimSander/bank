@@ -32,6 +32,46 @@ final class PlanChangeTest extends DatabaseTestCase {
 		self::assertSame(0.1, $updated['income_percent']);
 	}
 
+	public function testClearingAndRetypingPercentKeepsMonthGoal(): void {
+		putenv('TEST_TODAY=2026-10-15');
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+		$this->addEntry($accountId, 'income', 1000, '2026-10-10');
+
+		$savingsId = (int) getBankTypeBySlug($this->pdo, $accountId, 'savings')['id'];
+		updateBankType($this->pdo, $accountId, $savingsId, ['income_percent' => null]);
+		updateBankType($this->pdo, $accountId, $savingsId, ['income_percent' => 0.15]);
+
+		self::assertNull(getBankTypeBySlug($this->pdo, $accountId, 'savings')['goal_income_from']);
+
+		$row = buildMonthlyStatsRow($this->pdo, $accountId, '2026-10-01');
+		self::assertSame(150.0, $row['type_stats']['savings']['goal']);
+	}
+
+	public function testMonthCardSumsOldAndNewPercentGoals(): void {
+		putenv('TEST_TODAY=2026-10-15');
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+		$this->addEntry($accountId, 'income', 100, '2026-10-10');
+
+		putenv('TEST_TODAY=2026-10-16');
+		$savingsId = (int) getBankTypeBySlug($this->pdo, $accountId, 'savings')['id'];
+		$investmentsId = (int) getBankTypeBySlug($this->pdo, $accountId, 'investments')['id'];
+		updateBankType($this->pdo, $accountId, $savingsId, ['income_percent' => 0.10]);
+		updateBankType($this->pdo, $accountId, $investmentsId, ['income_percent' => 0.30]);
+
+		$row = buildMonthlyStatsRow($this->pdo, $accountId, '2026-10-01');
+		self::assertSame(15.0, $row['type_stats']['savings']['goal']);
+		self::assertSame(25.0, $row['type_stats']['investments']['goal']);
+
+		putenv('TEST_TODAY=2026-10-17');
+		$this->addEntry($accountId, 'income', 100, '2026-10-17');
+
+		$row = buildMonthlyStatsRow($this->pdo, $accountId, '2026-10-01');
+		self::assertSame(25.0, $row['type_stats']['savings']['goal']);
+		self::assertSame(55.0, $row['type_stats']['investments']['goal']);
+	}
+
 	public function testPercentChangeDoesNotRecalculatePastIncomeDays(): void {
 		putenv('TEST_TODAY=2026-09-21');
 		$accountId = $this->createTestAccount();
