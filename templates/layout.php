@@ -44,7 +44,6 @@ if (isset($_SESSION['flash'])) {
 	<meta name="csrf-token" content="<?php echo htmlspecialchars(csrfToken()); ?>">
 	<title><?php echo htmlspecialchars($pageTitle); ?></title>
 	<link rel="stylesheet" href="/assets/css/index.css">
-	<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 	<?php if ($flashMessage !== null): ?>
@@ -57,6 +56,7 @@ if (isset($_SESSION['flash'])) {
 		<?php include __DIR__ . '/partials/legal-reconsent-banner.php'; ?>
 	<?php endif; ?>
 	<?php echo $content; ?>
+	<script src="/assets/js/numeric-inputs.js" defer></script>
 	<script src="/assets/js/date-picker.js" defer></script>
 	<?php if ($uri === '/bank' || str_starts_with($uri, '/bank/')): ?>
 		<script src="/assets/js/range-picker.js" defer></script>
