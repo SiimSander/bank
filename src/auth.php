@@ -77,12 +77,45 @@ function clearLoginAttempts(string $username): void {
 	unset($_SESSION[loginAttemptKey($username)]);
 }
 
-function signup(PDO $pdo, string $name, string $username, string $email, string $password): bool|string {
-	if (trim($name) === '') {
+const ACCOUNT_NAME_PATTERN = '/^\p{L}+(?:[ \'-]\p{L}+)*$/u';
+const ACCOUNT_USERNAME_PATTERN = '/^[A-Za-z0-9]+$/';
+
+function validateAccountName(string $name): ?string {
+	if ($name === '') {
 		return 'Name is required';
 	}
-	if (trim($username) === '') {
+
+	if (mb_strlen($name) > 100 || preg_match(ACCOUNT_NAME_PATTERN, $name) !== 1) {
+		return 'Name can only contain letters, spaces, hyphens and apostrophes';
+	}
+
+	return null;
+}
+
+function validateAccountUsername(string $username): ?string {
+	if ($username === '') {
 		return 'Username is required';
+	}
+
+	if (strlen($username) > 50 || preg_match(ACCOUNT_USERNAME_PATTERN, $username) !== 1) {
+		return 'Username can only contain letters and numbers';
+	}
+
+	return null;
+}
+
+function signup(PDO $pdo, string $name, string $username, string $email, string $password): bool|string {
+	$name = trim($name);
+	$username = trim($username);
+
+	$nameError = validateAccountName($name);
+	if ($nameError !== null) {
+		return $nameError;
+	}
+
+	$usernameError = validateAccountUsername($username);
+	if ($usernameError !== null) {
+		return $usernameError;
 	}
 	if (trim($email) === '') {
 		return 'Email is required';
