@@ -503,11 +503,13 @@ function updateBankType(PDO $pdo, int $accountId, int $typeId, array $input): ar
 	if ($isActive && !$wasActive && $newPercent !== null) {
 		$goalIncomeFrom = resolveGoalIncomeFromOnActivate($type);
 		$goalIncomeFromChanged = true;
-	} elseif ($oldPercent === null && $newPercent !== null && ($goalIncomeFrom === null || $goalIncomeFrom === '')) {
+	} elseif (
+		$oldPercent === null
+		&& $newPercent !== null
+		&& ($goalIncomeFrom === null || $goalIncomeFrom === '')
+		&& !typeHasIncomePercentHistory($pdo, $typeId)
+	) {
 		$goalIncomeFrom = Clock::today();
-		$goalIncomeFromChanged = true;
-	} elseif ($newPercent === null) {
-		$goalIncomeFrom = null;
 		$goalIncomeFromChanged = true;
 	}
 
