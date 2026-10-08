@@ -5,7 +5,7 @@ const CONSENT_TYPE_PRIVACY = 'privacy';
 const CONSENT_TYPE_BANK_AIS = 'bank_ais';
 
 function appDisplayName(): string {
-	return AppConfig::get('APP_NAME', 'Wins & Bank') ?? 'Wins & Bank';
+	return AppConfig::get('APP_NAME', 'The Vault') ?? 'The Vault';
 }
 
 /** @var list<string> */
@@ -123,8 +123,8 @@ function settingsReturnLabel(string $returnPath): string {
 		'/bank/configure' => 'Back to Configure Types',
 		'/bank/lhv' => 'Back to LHV',
 		'/bank/lhv/connect' => 'Back to Connect Bank',
-		'/wins' => 'Back to Wins',
-		'/wins/history' => 'Back to Wins History',
+		'/habits' => 'Back to Habits',
+		'/habits/history' => 'Back to Habits History',
 		default => 'Back',
 	};
 }
