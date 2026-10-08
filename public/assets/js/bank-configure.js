@@ -89,20 +89,7 @@ const formatYearly = (value) => value.toLocaleString(undefined, {
 	maximumFractionDigits: 2,
 });
 
-const getExpensesConfigureType = () => {
-	const row = [...document.querySelectorAll('.js-configure-row')].find(
-		(configureRow) => configureRow.querySelector('[name="slug"]')?.value.trim() === 'expenses'
-	);
-
-	if (!row) {
-		return { label: 'Expenses', colorHex: '#f472b6' };
-	}
-
-	return {
-		label: row.querySelector('[name="label"]').value.trim() || 'Expenses',
-		colorHex: row.querySelector('[name="color_hex"]').value,
-	};
-};
+const UNALLOCATED_COLOR = '#9ca3af';
 
 const appendProjectionCard = (grid, label, colorHex, yearly) => {
 	const el = document.createElement('span');
@@ -125,15 +112,22 @@ const updateProjection = () => {
 
 	const income = parseFloat(incomeInput.value) || 0;
 	const candidates = [];
+	let incomeType = { label: 'Income', colorHex: '#22c55e' };
 
 	document.querySelectorAll('.js-configure-row').forEach((row) => {
+		if (row.querySelector('[name="slug"]').value.trim() === 'income') {
+			incomeType = {
+				label: row.querySelector('[name="label"]').value.trim() || incomeType.label,
+				colorHex: row.querySelector('[name="color_hex"]').value,
+			};
+		}
+
 		const isSystem = row.dataset.isSystem === '1';
 		const activeInput = row.querySelector('.js-configure-active');
 		const isActive = isSystem || (activeInput ? activeInput.checked : true);
 		const percentInput = row.querySelector('[name="income_percent"]');
-		const slug = row.querySelector('[name="slug"]').value.trim();
 
-		if (!isActive || !percentInput || percentInput.value === '' || slug === 'expenses') {
+		if (!isActive || !percentInput || percentInput.value === '') {
 			return;
 		}
 
@@ -161,15 +155,15 @@ const updateProjection = () => {
 
 	let allocatedPercent = 0;
 
+	appendProjectionCard(grid, incomeType.label, incomeType.colorHex, income * 12);
+
 	candidates.forEach((type) => {
 		allocatedPercent += type.percent;
 		appendProjectionCard(grid, type.label, type.colorHex, income * type.percent * 12);
 	});
 
 	if (allocatedPercent < 0.9999) {
-		const expensesType = getExpensesConfigureType();
-		const leftoverYearly = income * (1 - allocatedPercent) * 12;
-		appendProjectionCard(grid, expensesType.label, expensesType.colorHex, leftoverYearly);
+		appendProjectionCard(grid, 'Unallocated', UNALLOCATED_COLOR, income * (1 - allocatedPercent) * 12);
 	}
 };
 
