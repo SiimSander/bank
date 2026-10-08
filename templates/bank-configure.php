@@ -39,7 +39,7 @@ $allocationPercent = round($allocationTotal * 100, 1);
 			<p class="projection-panel__error js-projection-income-error" hidden></p>
 			<div class="projection-grid js-projection-grid"></div>
 			<p class="projection-panel__explainer js-projection-explainer" hidden>
-				What you can achieve in a year, based on guaranteed monthly income, created types and '%' added from the income by you. <br>
+				What you can achieve in a year, based on guaranteed monthly income and created types. <br>
 				This is a planning view only; goals still follow the income you actually log.
 			</p>
 			<p class="projection-panel__hint js-projection-hint" hidden>Set a percentage on a type below to see it here.</p>
