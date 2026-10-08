@@ -97,7 +97,7 @@ $settingsReturnPath = settingsReturnPath();
 		<section class="settings-card">
 			<h2 class="settings-card__title">Connected banks</h2>
 			<?php if ($bankConnections === []): ?>
-				<p class="settings-card__hint">No bank connections. You can connect LHV from the Bank page.</p>
+				<p class="settings-card__hint">No bank connections. You can connect LHV from the Bank page SOON!</p>
 			<?php else: ?>
 				<ul class="settings-bank-list">
 					<?php foreach ($bankConnections as $connection): ?>
