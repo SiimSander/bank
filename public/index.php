@@ -10,6 +10,16 @@ initSecureSession();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
+// Served from a top-level path without extension: `php -S` started without public/router.php answers 404 for missing files under /assets and for missing .css paths.
+if ($uri === '/styles') {
+	require_once __DIR__ . '/../src/cssBundle.php';
+
+	header('Content-Type: text/css; charset=utf-8');
+	header('Cache-Control: ' . (isset($_GET['v']) ? 'public, max-age=31536000, immutable' : 'no-cache'));
+	echo buildCssBundle();
+	exit;
+}
+
 if (str_starts_with($uri, '/assets/')) {
 	$assetPath = __DIR__ . $uri;
 
@@ -31,6 +41,7 @@ if (str_starts_with($uri, '/assets/')) {
 
 require_once __DIR__ . '/../src/helpers.php';
 require_once __DIR__ . '/../src/numericInput.php';
+require_once __DIR__ . '/../src/cssBundle.php';
 require_once __DIR__ . '/../src/database.php';
 require_once __DIR__ . '/../src/mail.php';
 require_once __DIR__ . '/../src/csrf.php';
