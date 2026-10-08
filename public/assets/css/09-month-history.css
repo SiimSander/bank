@@ -1,0 +1,103 @@
+/* Month history */
+
+.month-history-card {
+	padding: 1.25rem;
+	margin-bottom: 1rem;
+	background-color: var(--color-surface);
+	border-radius: var(--radius-card);
+}
+
+.month-history-card__title {
+	margin: 0 0 1rem;
+	font-size: 0.95rem;
+	color: var(--color-text-muted);
+	font-weight: 500;
+}
+
+.month-history-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	padding: 0.35rem 0;
+	font-size: 0.95rem;
+}
+
+.month-history-row__label {
+	color: var(--color-text-muted);
+}
+
+.month-history-row__note {
+	display: block;
+	font-size: 0.8rem;
+	color: var(--color-text-subtle);
+	text-align: right;
+}
+
+.month-history-row--highlight {
+	margin-top: 0.75rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	font-weight: 600;
+}
+
+.month-history-row--highlight .month-history-row__value {
+	font-size: 1.125rem;
+}
+
+.month-history-row--section {
+	margin-top: 0.5rem;
+	font-weight: 600;
+}
+
+.month-history-row--section .month-history-row__label {
+	color: var(--color-text);
+}
+
+.month-history-breakdown {
+	margin: 0 0 0.75rem 1rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.month-history-breakdown__item {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.2rem 0;
+}
+
+.month-history-breakdown--aligned {
+	display: grid;
+	grid-template-columns: auto auto 1fr;
+	column-gap: 0.35rem;
+}
+
+.month-history-breakdown--aligned .month-history-breakdown__item {
+	display: contents;
+}
+
+.month-history-breakdown--aligned .month-history-breakdown__name,
+.month-history-breakdown--aligned .month-history-breakdown__ticker,
+.month-history-breakdown--aligned .month-history-breakdown__amount {
+	padding: 0.2rem 0;
+}
+
+.month-history-breakdown__name--wide {
+	grid-column: 1 / 3;
+}
+
+.month-history-breakdown--aligned .month-history-breakdown__amount {
+	grid-column: 3;
+	justify-self: end;
+	padding-left: 0.75rem;
+}
+
+.month-history-breakdown__item .month-history-row__growth--positive,
+.month-history-row__value.month-history-row__growth--positive {
+	color: var(--color-accent);
+}
+
+.month-history-breakdown__item .month-history-row__growth--negative,
+.month-history-row__value.month-history-row__growth--negative {
+	color: var(--color-danger);
+}
+

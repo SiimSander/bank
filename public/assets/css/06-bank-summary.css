@@ -1,0 +1,196 @@
+/* Type pills */
+
+.type-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.type-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.45rem 0.875rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	background-color: var(--color-surface);
+	border-radius: var(--radius-pill);
+	text-decoration: none;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.type-pill:hover {
+	color: var(--color-text);
+	background-color: var(--color-surface-elevated);
+}
+
+.type-pill--active {
+	color: var(--color-text);
+	background-color: var(--color-surface-elevated);
+}
+
+.type-pill__dot {
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+}
+
+.type-pill__dot--income { background-color: var(--color-income); }
+.type-pill__dot--expenses { background-color: var(--color-expenses); }
+.type-pill__dot--investments { background-color: var(--color-investments); }
+.type-pill__dot--savings { background-color: var(--color-savings); }
+.type-pill__dot--pension { background-color: var(--color-pension); }
+
+/* Summary card */
+
+.summary-card {
+	padding: 1.25rem;
+	margin-bottom: 1.25rem;
+	background-color: var(--color-surface);
+	border-radius: var(--radius-card);
+}
+
+.bank-range-filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	margin-bottom: 1rem;
+}
+
+.bank-range-filter__link {
+	padding: 0.4rem 0.875rem;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+	background-color: var(--color-surface-elevated);
+	border-radius: var(--radius-pill);
+	text-decoration: none;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.bank-range-filter__link--active {
+	background-color: var(--color-accent);
+	color: #000;
+	font-weight: 600;
+}
+
+.bank-range-filter {
+	position: relative;
+}
+
+.range-picker__trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	border: none;
+	font-family: inherit;
+	line-height: inherit;
+	cursor: pointer;
+}
+
+.range-picker__icon {
+	display: block;
+	width: 1rem;
+	height: 1rem;
+}
+
+.range-picker__popover {
+	top: calc(100% + 0.25rem);
+	left: 0;
+}
+
+.range-picker__popover[hidden] {
+	display: none;
+}
+
+.range-picker__hint {
+	margin-top: 0.75rem;
+	font-size: 0.8rem;
+	text-align: center;
+	color: var(--color-text-muted);
+}
+
+.date-picker__day.range-picker__day--in-range {
+	background-color: rgba(34, 197, 94, 0.18);
+	border-radius: 0;
+}
+
+.date-picker__day.range-picker__day--in-range.date-picker__day--selected {
+	background-color: var(--color-accent);
+	border-radius: 0.5rem;
+}
+
+.bank-summary-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.625rem;
+}
+
+.bank-summary-card {
+	padding: 0.875rem 1rem;
+	border-radius: var(--radius-card);
+}
+
+.bank-summary-card__label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+}
+
+.bank-summary-card__value {
+	font-size: 1.125rem;
+	font-weight: 600;
+}
+
+.bank-summary-card--income { background-color: var(--color-income-bg); }
+.bank-summary-card--expenses { background-color: var(--color-expenses-bg); }
+.bank-summary-card--investments { background-color: var(--color-investments-bg); }
+.bank-summary-card--savings { background-color: var(--color-savings-bg); }
+.bank-summary-card--pension { background-color: var(--color-pension-bg); }
+
+/* Daily history */
+
+.daily-history {
+	margin-bottom: 1rem;
+}
+
+.daily-history__item {
+	padding: 0.875rem 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.daily-history__item:last-child {
+	border-bottom: none;
+}
+
+.daily-history__date {
+	display: block;
+	margin-bottom: 0.35rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.daily-history__amounts {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-size: 0.85rem;
+}
+
+.daily-history__amount {
+	display: block;
+}
+
+.daily-history__amount--income { color: var(--color-income); }
+.daily-history__amount--expenses { color: var(--color-expenses); }
+.daily-history__amount--investments { color: var(--color-investments); }
+.daily-history__amount--savings { color: var(--color-savings); }
+.daily-history__amount--pension { color: var(--color-pension); }
+
+.empty-state {
+	color: var(--color-text-muted);
+	font-size: 0.9rem;
+	font-style: italic;
+}
+

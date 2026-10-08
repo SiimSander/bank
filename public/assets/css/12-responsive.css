@@ -1,0 +1,119 @@
+/* Responsive layouts */
+
+@media (min-width: 768px) {
+	:root {
+		--app-max: 1200px;
+		--sidebar-width: 220px;
+		--nav-height: 0px;
+		--modal-max: 560px;
+	}
+
+	.app-shell {
+		display: grid;
+		grid-template-columns: var(--sidebar-width) 1fr;
+		grid-template-rows: var(--header-height) 1fr;
+		grid-template-areas:
+			"header header"
+			"sidebar main";
+		padding-top: 0;
+		padding-bottom: 1.5rem;
+	}
+
+	.app-header {
+		position: sticky;
+		top: 0;
+		grid-area: header;
+		padding: 0 1.5rem;
+		z-index: 100;
+	}
+
+	.side-nav {
+		display: flex;
+		flex-direction: column;
+		grid-area: sidebar;
+		gap: 0.25rem;
+		padding: 1rem 0.75rem;
+		background-color: var(--color-surface);
+		border-right: 1px solid rgba(255, 255, 255, 0.06);
+	}
+
+	.app-main {
+		grid-area: main;
+		padding: 1.5rem 1.5rem 0;
+	}
+
+	.bottom-nav {
+		display: none;
+	}
+
+	.modal-overlay--open {
+		align-items: center;
+		padding-top: 1rem;
+	}
+
+	.landing-cards {
+		flex-direction: row;
+	}
+
+	.landing-card {
+		flex: 1;
+	}
+
+	.bank-balance-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+
+	.wins-page__content {
+		max-width: 640px;
+		margin: 0 auto;
+	}
+}
+
+@media (min-width: 1024px) {
+	.bank-balance-grid {
+		grid-template-columns: repeat(6, 1fr);
+	}
+
+	.bank-page__columns {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.bank-summary-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (min-width: 900px) {
+	.type-page__layout {
+		display: grid;
+		grid-template-columns: minmax(320px, 380px) 1fr;
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.type-page__sidebar {
+		position: sticky;
+		top: calc(var(--header-height) + 1rem);
+	}
+
+	.month-history-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+
+	.wins-history-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		align-items: start;
+	}
+
+	.history-day-card {
+		margin-bottom: 0;
+	}
+}
+

@@ -1,0 +1,72 @@
+/* Bank page header actions */
+
+.page-header-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+}
+
+.page-header-row .page-title {
+	margin: 0;
+}
+
+.bank-actions {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.bank-actions .btn-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	text-decoration: none;
+	border: none;
+	cursor: pointer;
+	font-family: inherit;
+}
+
+.bank-actions .btn-pill .icon {
+	width: 0.9rem;
+	height: 0.9rem;
+}
+
+/* Balance grid */
+
+.bank-balance-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.625rem;
+	margin-bottom: 1.25rem;
+}
+
+.bank-balance-card {
+	min-width: 0;
+	padding: 0.875rem 1rem;
+	background-color: var(--color-surface);
+	border-radius: var(--radius-card);
+}
+
+.bank-balance-card__label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+}
+
+.bank-balance-card__value {
+	overflow-wrap: anywhere;
+	font-size: 1.125rem;
+	font-weight: 600;
+}
+
+.bank-balance-card--total {
+	background-color: var(--color-surface-elevated);
+}
+
+.bank-balance-card--total .bank-balance-card__value {
+	color: var(--color-accent);
+	font-size: 1.25rem;
+}
+

@@ -1,0 +1,248 @@
+/* Calculator */
+
+.calculator {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+	max-width: 720px;
+}
+
+.calculator-hero {
+	padding: 1.25rem;
+	background-color: var(--color-surface);
+	border-radius: var(--radius-card);
+}
+
+.calculator-hero__label {
+	margin: 0 0 0.25rem;
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+}
+
+.calculator-hero__value {
+	margin: 0 0 1rem;
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.calculator-hero__stats {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+}
+
+.calculator-stat__label {
+	margin: 0 0 0.25rem;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+.calculator-stat__value {
+	margin: 0;
+	font-size: 1.05rem;
+	font-weight: 600;
+}
+
+.calculator-stat__value--interest {
+	color: var(--color-income);
+}
+
+.calculator-stat__value--negative {
+	color: var(--color-danger);
+}
+
+.calculator-chart-card {
+	padding: 1rem;
+	background-color: var(--color-surface);
+	border-radius: var(--radius-card);
+}
+
+.calculator-chart__legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 1.25rem;
+	margin-bottom: 0.75rem;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+.calculator-chart__legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.calculator-chart__legend-dot {
+	width: 0.625rem;
+	height: 0.625rem;
+	border-radius: 50%;
+}
+
+.calculator-chart__legend-dot--portfolio {
+	background-color: var(--color-investments);
+}
+
+.calculator-chart__legend-dot--invested {
+	background-color: var(--color-text-subtle);
+}
+
+.calculator-chart {
+	width: 100%;
+	min-height: 220px;
+}
+
+.calculator-chart__svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.calculator-chart__grid-line {
+	stroke: rgba(255, 255, 255, 0.08);
+	stroke-width: 1;
+}
+
+.calculator-chart__axis-label {
+	fill: var(--color-text-subtle);
+	font-size: 11px;
+}
+
+.calculator-chart__line {
+	fill: none;
+	stroke-width: 2.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.calculator-chart__line--portfolio {
+	stroke: var(--color-investments);
+}
+
+.calculator-chart__line--invested {
+	stroke: var(--color-text-subtle);
+	stroke-dasharray: 6 5;
+}
+
+.calculator-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.calculator-control {
+	padding: 1rem;
+	background-color: var(--color-surface);
+	border-radius: var(--radius-card);
+}
+
+.calculator-control__header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
+}
+
+.calculator-control__header--value {
+	margin-top: -0.25rem;
+}
+
+.calculator-control__label {
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.calculator-control__hint {
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+.calculator-control__number {
+	width: 7rem;
+	padding: 0.4rem 0.5rem;
+	font-size: 0.875rem;
+	color: var(--color-text);
+	background-color: var(--color-surface-input);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 8px;
+	text-align: right;
+}
+
+.calculator-range {
+	width: 100%;
+	height: 0.35rem;
+	margin: 0;
+	appearance: none;
+	background: var(--color-surface-elevated);
+	border-radius: var(--radius-pill);
+}
+
+.calculator-range::-webkit-slider-thumb {
+	appearance: none;
+	width: 1.125rem;
+	height: 1.125rem;
+	border-radius: 50%;
+	background: var(--color-accent);
+	cursor: pointer;
+}
+
+.calculator-range::-moz-range-thumb {
+	width: 1.125rem;
+	height: 1.125rem;
+	border: none;
+	border-radius: 50%;
+	background: var(--color-accent);
+	cursor: pointer;
+}
+
+.calculator-timing-toggle,
+.calculator-horizon-pills {
+	display: flex;
+	flex-shrink: 0;
+	gap: 0.25rem;
+	padding: 0.125rem;
+	background-color: var(--color-surface-elevated);
+	border-radius: var(--radius-pill);
+}
+
+.calculator-timing-toggle__option,
+.calculator-horizon-pill {
+	padding: 0.25rem 0.625rem;
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--color-text-muted);
+	background: transparent;
+	border: none;
+	border-radius: var(--radius-pill);
+	cursor: pointer;
+}
+
+.calculator-timing-toggle__option:hover,
+.calculator-horizon-pill:hover {
+	color: var(--color-text);
+}
+
+.calculator-timing-toggle__option--active,
+.calculator-horizon-pill--active {
+	color: var(--color-text);
+	background-color: rgba(34, 197, 94, 0.15);
+}
+
+.calculator-horizon-pills {
+	margin-bottom: 0.75rem;
+}
+
+.calculator-disclaimer {
+	margin: 0;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+@media (min-width: 768px) {
+	.calculator-hero__value {
+		font-size: 2.5rem;
+	}
+}
+
