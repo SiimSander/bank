@@ -16,6 +16,16 @@ const formatYearly = (value) => value.toLocaleString(undefined, {
 	maximumFractionDigits: 2,
 });
 
+const createProjectionCard = (label, colorHex, yearly) => {
+	const el = document.createElement('span');
+	el.className = 'projection-card';
+	el.style.setProperty('--type-color', colorHex);
+	el.style.setProperty('--type-bg', hexToRgba(colorHex, 0.15));
+	el.innerHTML = `<span class="projection-card__label">${label}</span><span class="projection-card__value">${formatYearly(yearly)}</span>`;
+
+	return el;
+};
+
 const renderProjection = (card) => {
 	const projectionEl = card.querySelector('.js-plan-projection');
 	const income = parseFloat(incomeInput.value);
@@ -27,27 +37,16 @@ const renderProjection = (card) => {
 	}
 
 	const types = JSON.parse(projectionEl.dataset.types || '[]');
-	let allocatedPercent = 0;
+
+	projectionEl.appendChild(createProjectionCard(
+		projectionEl.dataset.incomeLabel,
+		projectionEl.dataset.incomeColor,
+		income * 12
+	));
 
 	types.forEach((type) => {
-		allocatedPercent += type.income_percent;
-
-		const yearly = income * type.income_percent * 12;
-		const el = document.createElement('span');
-		el.className = 'projection-card';
-		el.style.setProperty('--type-color', type.color_hex);
-		el.style.setProperty('--type-bg', hexToRgba(type.color_hex, 0.15));
-		el.innerHTML = `<span class="projection-card__label">${type.label}</span><span class="projection-card__value">${formatYearly(yearly)}</span>`;
-		projectionEl.appendChild(el);
+		projectionEl.appendChild(createProjectionCard(type.label, type.color_hex, income * type.income_percent * 12));
 	});
-
-	if (allocatedPercent < 0.9999) {
-		const leftoverYearly = income * (1 - allocatedPercent) * 12;
-		const el = document.createElement('span');
-		el.className = 'projection-card projection-card--unallocated';
-		el.innerHTML = `<span class="projection-card__label">Unallocated</span><span class="projection-card__value">${formatYearly(leftoverYearly)}</span>`;
-		projectionEl.appendChild(el);
-	}
 };
 
 const renderAllProjections = () => {
