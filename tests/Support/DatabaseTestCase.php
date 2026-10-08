@@ -61,6 +61,13 @@ abstract class DatabaseTestCase extends TestCase {
 	}
 
 	protected function seedTypes(int $accountId): void {
+		$existing = $this->pdo->prepare('SELECT COUNT(*) FROM bank_entry_types WHERE account_id = ?');
+		$existing->execute([$accountId]);
+
+		if ((int) $existing->fetchColumn() === 0) {
+			seedBankTypesFromDefinitions($this->pdo, $accountId, TypeFixtures::classicDefinitions());
+		}
+
 		getBankTypes($this->pdo, $accountId);
 
 		$this->pdo->prepare(
