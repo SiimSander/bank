@@ -14,6 +14,15 @@ function recordIncomePercentSegment(PDO $pdo, int $bankEntryTypeId, string $effe
 	$statement->execute([$bankEntryTypeId, $effectiveFrom, $incomePercent]);
 }
 
+function typeHasIncomePercentHistory(PDO $pdo, int $bankEntryTypeId): bool {
+	$check = $pdo->prepare(
+		'SELECT 1 FROM bank_entry_type_income_percent_history WHERE bank_entry_type_id = ? LIMIT 1'
+	);
+	$check->execute([$bankEntryTypeId]);
+
+	return $check->fetchColumn() !== false;
+}
+
 function ensureInitialIncomePercentSegment(PDO $pdo, array $type): void {
 	if ($type['income_percent'] === null) {
 		return;
