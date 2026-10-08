@@ -27,7 +27,7 @@ function renderPrivacyPolicyHtml(): string {
 	<p>Supervisory authority (Estonia): Andmekaitse Inspektsioon (AKI) — <a href="https://www.aki.ee" rel="noopener noreferrer">aki.ee</a></p>
 
 	<h2>2. What this app is</h2>
-	<p><?php echo $app; ?> is a personal finance and habit tracker. It is <strong>not</strong> a bank, credit institution, payment institution, or investment adviser. We help you record income, expenses, savings goals, and daily wins.</p>
+	<p><?php echo $app; ?> is a personal finance and habit tracker. It is <strong>not</strong> a bank, credit institution, payment institution, or investment adviser. We help you record income, expenses, savings goals, and daily habits.</p>
 
 	<h2>3. Data we collect</h2>
 	<ul>
@@ -35,7 +35,7 @@ function renderPrivacyPolicyHtml(): string {
 		<li><strong>Finance entries:</strong> date, category, amount, optional note (up to 150 characters), payment method, and import reference for synced transactions.</li>
 		<li><strong>Derived statistics:</strong> monthly goals, actuals, net worth snapshots, and missing-goal calculations computed from your entries.</li>
 		<li><strong>Bank connection metadata:</strong> bank name, country, IBAN, connection validity, sync timestamps, and an Enable Banking session identifier (not exported in data downloads).</li>
-		<li><strong>Wins:</strong> daily checklist titles and completion status.</li>
+		<li><strong>Habits:</strong> habit names and your daily done or failed marks.</li>
 		<li><strong>Security tokens:</strong> hashed password-reset and email-verification tokens with expiry.</li>
 		<li><strong>Consent records:</strong> which legal documents you accepted, version, timestamp, IP address, and browser user-agent snippet.</li>
 		<li><strong>Server logs:</strong> technical events such as failed logins or sync errors. Passwords are never logged.</li>
@@ -54,7 +54,7 @@ function renderPrivacyPolicyHtml(): string {
 
 	<h2>5. Why we process data (legal bases)</h2>
 	<ul>
-		<li><strong>Contract (GDPR Art 6(1)(b)):</strong> running your account, storing entries, goals, and wins.</li>
+		<li><strong>Contract (GDPR Art 6(1)(b)):</strong> running your account, storing entries, goals, and habits.</li>
 		<li><strong>Consent (GDPR Art 6(1)(a)):</strong> connecting your bank account via AIS.</li>
 		<li><strong>Legitimate interest (GDPR Art 6(1)(f)):</strong> security logging, abuse prevention, and service reliability.</li>
 	</ul>
@@ -106,7 +106,7 @@ function renderTermsOfUseHtml(): string {
 	<p><strong>Draft notice:</strong> These terms govern use of <?php echo $app; ?>. Have a qualified lawyer review them before a public launch.</p>
 
 	<h2>1. Service description</h2>
-	<p><?php echo $app; ?> lets you track daily wins, record income and spending, set allocation goals, and optionally import LHV transactions through Enable Banking.</p>
+	<p><?php echo $app; ?> lets you track daily habits, record income and spending, set allocation goals, and optionally import LHV transactions through Enable Banking.</p>
 
 	<h2>2. Eligibility</h2>
 	<p>You must be at least 16 years old and able to enter a binding agreement. You are responsible for the accuracy of information you provide.</p>
