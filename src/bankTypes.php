@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/BankRequestCache.php';
 require_once __DIR__ . '/Clock.php';
+require_once __DIR__ . '/numericInput.php';
 require_once __DIR__ . '/typeIncomePercentHistory.php';
 require_once __DIR__ . '/goalCalculations.php';
 
@@ -11,12 +12,8 @@ const BANK_RESERVED_SLUGS = ['history', 'configure', 'update', 'delete', 'lhv'];
 function defaultBankTypeDefinitions(): array {
 	return [
 		['slug' => 'income', 'label' => 'Income', 'color_hex' => '#22c55e', 'income_percent' => null, 'balance_mode' => 'wallet_in', 'is_system' => 1, 'show_in_pills' => 1, 'sort_order' => 0],
-		['slug' => 'expenses', 'label' => 'Expenses', 'color_hex' => '#f472b6', 'income_percent' => 0.6, 'balance_mode' => 'wallet_out', 'is_system' => 0, 'show_in_pills' => 1, 'sort_order' => 1],
-		['slug' => 'savings', 'label' => 'Savings', 'color_hex' => '#60a5fa', 'income_percent' => 0.15, 'balance_mode' => 'pot', 'is_system' => 0, 'show_in_pills' => 1, 'sort_order' => 2],
-		['slug' => 'investments', 'label' => 'Investments', 'color_hex' => '#a78bfa', 'income_percent' => 0.25, 'balance_mode' => 'pot', 'is_system' => 0, 'show_in_pills' => 1, 'sort_order' => 3],
-		['slug' => 'pension', 'label' => 'Pension', 'color_hex' => '#fb923c', 'income_percent' => null, 'balance_mode' => 'pot', 'is_system' => 0, 'show_in_pills' => 1, 'sort_order' => 4],
-		['slug' => 'kogumiskonto', 'label' => 'Kogumiskonto', 'color_hex' => '#888888', 'income_percent' => null, 'balance_mode' => 'pot', 'is_system' => 1, 'show_in_pills' => 0, 'sort_order' => 5],
-		['slug' => 'wallet_adjustment', 'label' => 'Balance adjustment', 'color_hex' => '#888888', 'income_percent' => null, 'balance_mode' => 'adjustment', 'is_system' => 1, 'show_in_pills' => 0, 'sort_order' => 6],
+		['slug' => 'expenses', 'label' => 'Expenses', 'color_hex' => '#ff0000', 'income_percent' => 1, 'balance_mode' => 'wallet_out', 'is_system' => 0, 'show_in_pills' => 1, 'sort_order' => 1],
+		['slug' => 'wallet_adjustment', 'label' => 'Balance adjustment', 'color_hex' => '#888888', 'income_percent' => null, 'balance_mode' => 'adjustment', 'is_system' => 1, 'show_in_pills' => 0, 'sort_order' => 2],
 	];
 }
 
@@ -373,6 +370,10 @@ function createBankType(PDO $pdo, int $accountId, array $input): array {
 	}
 
 	if ($incomePercent !== null && $incomePercent !== '') {
+		if (!isPlainDecimal($incomePercent)) {
+			return ['success' => false, 'error' => 'Income percent must be a number.'];
+		}
+
 		$incomePercent = round((float) $incomePercent, 4);
 
 		if ($incomePercent < 0 || $incomePercent > 1) {
@@ -437,6 +438,11 @@ function updateBankType(PDO $pdo, int $accountId, int $typeId, array $input): ar
 
 	if ($type === null) {
 		return ['success' => false, 'error' => 'Type not found.'];
+	}
+
+	$submittedPercent = $input['income_percent'] ?? null;
+	if ($submittedPercent !== null && $submittedPercent !== '' && !isPlainDecimal($submittedPercent)) {
+		return ['success' => false, 'error' => 'Income percent must be a number.'];
 	}
 
 	$label = trim($input['label'] ?? $type['label']);
