@@ -3,7 +3,7 @@ require_once __DIR__ . '/icons.php';
 /** @var string $uri */
 
 $isHome = $uri === '/landing';
-$isWins = str_starts_with($uri, '/wins');
+$isHabits = str_starts_with($uri, '/habits');
 $isBank = str_starts_with($uri, '/bank');
 $isStockGoals = $uri === '/stock-goals';
 $isCalculator = $uri === '/calculator';
@@ -13,9 +13,9 @@ $isCalculator = $uri === '/calculator';
 		<?php icon('home', 'side-nav__icon'); ?>
 		<span class="side-nav__label">Home</span>
 	</a>
-	<a class="side-nav__link<?php echo $isWins ? ' side-nav__link--active' : ''; ?>" href="/wins">
-		<?php icon('trophy', 'side-nav__icon'); ?>
-		<span class="side-nav__label">Wins</span>
+	<a class="side-nav__link<?php echo $isHabits ? ' side-nav__link--active' : ''; ?>" href="/habits">
+		<?php icon('target', 'side-nav__icon'); ?>
+		<span class="side-nav__label">Habits</span>
 	</a>
 	<a class="side-nav__link<?php echo $isBank ? ' side-nav__link--active' : ''; ?>" href="/bank">
 		<?php icon('wallet', 'side-nav__icon'); ?>
