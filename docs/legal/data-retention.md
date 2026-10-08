@@ -6,7 +6,7 @@ Engineering reference for what the app stores and when it is deleted. User-facin
 
 | Data | Location | Retention |
 |------|----------|-----------|
-| Profile, entries, wins, types, stats | MySQL | Until account deletion via Settings |
+| Profile, entries, habits, types, stats | MySQL | Until account deletion via Settings |
 | Consent audit log | `account_consents` | Until account deletion |
 | Bank connection metadata | `bank_connections` | Until disconnect or account deletion |
 
