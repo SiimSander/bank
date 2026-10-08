@@ -63,7 +63,7 @@
 		grid-template-columns: repeat(3, 1fr);
 	}
 
-	.wins-page__content {
+	.habits-page__content {
 		max-width: 640px;
 		margin: 0 auto;
 	}
@@ -105,14 +105,14 @@
 		gap: 1rem;
 	}
 
-	.wins-history-grid {
+	.habits-history-grid {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
 		align-items: start;
 	}
 
-	.history-day-card {
+	.habit-history-card {
 		margin-bottom: 0;
 	}
 }
