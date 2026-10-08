@@ -46,7 +46,8 @@ require_once __DIR__ . '/../src/database.php';
 require_once __DIR__ . '/../src/mail.php';
 require_once __DIR__ . '/../src/csrf.php';
 require_once __DIR__ . '/../src/auth.php';
-require_once __DIR__ . '/../src/wins.php';
+require_once __DIR__ . '/../src/habits.php';
+require_once __DIR__ . '/../src/habitChart.php';
 require_once __DIR__ . '/../src/bank.php';
 require_once __DIR__ . '/../src/stockGoals.php';
 require_once __DIR__ . '/../src/enableBanking.php';
@@ -451,38 +452,65 @@ switch ($uri) {
 		$content = ob_get_clean();
 		break;
 	case '/wins':
+		header('Location: /habits', true, 301);
+		exit;
+	case '/wins/history':
+		header('Location: /habits/history', true, 301);
+		exit;
+	case '/habits':
 		if (!isset($_SESSION['user_id'])) {
 			header('Location: /login');
 			exit;
 		}
-		$pageTitle = 'Wins';
 		$pdo = db();
-		createTodayWinCard($pdo, $_SESSION['user_id']);
-		$winCard = getTodayWinCard($pdo, $_SESSION['user_id']);
+		$userId = (int) $_SESSION['user_id'];
+
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			requireCsrfToken();
-			$position = count(getWinCardItems($pdo, $winCard['id']));
-			createWinCardItem($pdo, $winCard['id'], $_POST['title'] ?? '', $position);
-			header('Location: /wins');
+			$result = createHabit($pdo, $userId, (string) ($_POST['title'] ?? ''));
+
+			if (!$result['success']) {
+				$_SESSION['flash'] = $result['error'];
+			}
+
+			header('Location: /habits');
 			exit;
 		}
-		$items = getWinCardItems($pdo, $winCard['id']);
+
+		$pageTitle = 'Habits';
+		$today = Clock::today();
+		$selectedDate = (string) ($_GET['date'] ?? $today);
+
+		if (!isHabitDateEditable($selectedDate, $today)) {
+			$selectedDate = $today;
+		}
+
+		$month = buildHabitMonth($pdo, $userId, Clock::monthStart());
+		$boardHabits = getHabitsForMonth($pdo, $userId, Clock::monthStart());
+		$dayItems = getHabitDayItems($pdo, $userId, $selectedDate);
+		$editableDates = getEditableHabitDates($today);
 		ob_start();
-		include __DIR__ . '/../templates/wins.php';
+		include __DIR__ . '/../templates/habits.php';
 		$content = ob_get_clean();
 		break;
-	case '/wins/history':
+	case '/habits/history':
 		if (!isset($_SESSION['user_id'])) {
 			header('Location: /login');
 			exit;
 		}
-		$pageTitle = 'Wins History';
-		$history = getWinCardHistory(db(), $_SESSION['user_id']);
+		$pageTitle = 'Habits History';
+		$pdo = db();
+		$historyMonths = array_map(
+			static fn(string $monthStart): array => buildHabitMonth($pdo, (int) $_SESSION['user_id'], $monthStart),
+			getHabitHistoryMonths($pdo, (int) $_SESSION['user_id'], true)
+		);
 		ob_start();
-		include __DIR__ . '/../templates/wins-history.php';
+		include __DIR__ . '/../templates/habits-history.php';
 		$content = ob_get_clean();
 		break;
-	case '/wins/status':
+	case '/habits/status':
+	case '/habits/rename':
+	case '/habits/delete':
 		header('Content-Type: application/json');
 
 		if (!isset($_SESSION['user_id'])) {
@@ -491,72 +519,8 @@ switch ($uri) {
 			exit;
 		}
 
-		requireCsrfToken(true);
-
-		$itemId = (int) ($_POST['itemId'] ?? 0);
-		$status = $_POST['status'] ?? '';
-		$updated = updateWinCardItemStatus(db(), $itemId, $_SESSION['user_id'], $status);
-
-		echo json_encode(['success' => $updated, 'status' => $status]);
-		exit;
-	case '/wins/title':
-		header('Content-Type: application/json');
-
-		if (!isset($_SESSION['user_id'])) {
-			http_response_code(401);
-			echo json_encode(['success' => false]);
-			exit;
-		}
-
-		requireCsrfToken(true);
-
-		$itemId = (int) ($_POST['itemId'] ?? 0);
-		$title = trim($_POST['title'] ?? '');
-		$updated = updateWinCardItemTitle(db(), $itemId, $_SESSION['user_id'], $title);
-
-		echo json_encode(['success' => $updated, 'title' => $title]);
-		exit;
-	case '/wins/item/delete':
-		header('Content-Type: application/json');
-
-		if (!isset($_SESSION['user_id'])) {
-			http_response_code(401);
-			echo json_encode(['success' => false]);
-			exit;
-		}
-
-		requireCsrfToken(true);
-
-		$itemId = (int) ($_POST['itemId'] ?? 0);
-		$deleted = deleteWinCardItem(db(), $itemId, $_SESSION['user_id']);
-
-		echo json_encode(['success' => $deleted]);
-		exit;
-	case '/wins/reorder':
-		header('Content-Type: application/json');
-
-		if (!isset($_SESSION['user_id'])) {
-			http_response_code(401);
-			echo json_encode(['success' => false]);
-			exit;
-		}
-
-		requireCsrfToken(true);
-
-		$itemIds = $_POST['itemIds'] ?? [];
-		if (!is_array($itemIds)) {
-			$itemIds = [];
-		}
-
-		$reordered = reorderWinCardItems(db(), $_SESSION['user_id'], $itemIds);
-
-		echo json_encode(['success' => $reordered]);
-		exit;
-	case '/wins/delete':
-		header('Content-Type: application/json');
-
-		if (!isset($_SESSION['user_id'])) {
-			http_response_code(401);
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			http_response_code(405);
 			echo json_encode(['success' => false]);
 			exit;
 		}
@@ -564,17 +528,19 @@ switch ($uri) {
 		requireCsrfToken(true);
 
 		$pdo = db();
+		$userId = (int) $_SESSION['user_id'];
+		$habitId = (int) ($_POST['habitId'] ?? 0);
 
-		if (isset($_POST['cardId'])) {
-			$cardId = (int) $_POST['cardId'];
+		if ($uri === '/habits/status') {
+			$status = (string) ($_POST['status'] ?? '');
+			$updated = setHabitStatus($pdo, $userId, $habitId, (string) ($_POST['date'] ?? ''), $status);
+
+			echo json_encode(['success' => $updated, 'status' => $status]);
+		} elseif ($uri === '/habits/rename') {
+			echo json_encode(renameHabit($pdo, $userId, $habitId, (string) ($_POST['title'] ?? '')));
 		} else {
-			$winCard = getTodayWinCard($pdo, $_SESSION['user_id']);
-			$cardId = $winCard ? $winCard['id'] : 0;
+			echo json_encode(['success' => deleteHabit($pdo, $userId, $habitId)]);
 		}
-
-		$deleted = deleteWinCard($pdo, $cardId, $_SESSION['user_id']);
-
-		echo json_encode(['success' => $deleted]);
 		exit;
 	case '/bank':
 		if (!isset($_SESSION['user_id'])) {
@@ -1076,7 +1042,7 @@ switch ($uri) {
 			exit('Account not found.');
 		}
 
-		$filename = 'wins-and-bank-export-' . date('Y-m-d') . '.json';
+		$filename = 'the-vault-export-' . date('Y-m-d') . '.json';
 		header('Content-Type: application/json; charset=utf-8');
 		header('Content-Disposition: attachment; filename="' . $filename . '"');
 		echo json_encode($export, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
