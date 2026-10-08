@@ -10,11 +10,11 @@
 			<?php echo csrfField(); ?>
 			<label>
 				Name
-				<input type="text" name="name" required autocomplete="name">
+				<input type="text" name="name" required maxlength="100" pattern="\p{L}+([ '\-]\p{L}+)*" title="Letters only (spaces, hyphens and apostrophes allowed)" autocomplete="name">
 			</label>
 			<label>
 				Username
-				<input type="text" name="username" required autocomplete="username">
+				<input type="text" name="username" required maxlength="50" pattern="[A-Za-z0-9]+" title="Letters and numbers only" autocomplete="username">
 			</label>
 			<label>
 				Email
