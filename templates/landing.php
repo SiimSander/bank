@@ -15,13 +15,13 @@ require_once __DIR__ . '/partials/icons.php';
 		</div>
 
 		<div class="landing-cards">
-			<a class="landing-card" href="/wins">
+			<a class="landing-card" href="/habits">
 				<span class="landing-card__icon-wrap">
-					<?php icon('trophy'); ?>
+					<?php icon('target'); ?>
 				</span>
 				<span class="landing-card__content">
-					<span class="landing-card__title">Wins</span>
-					<span class="landing-card__desc">Your daily checklist of small wins</span>
+					<span class="landing-card__title">Habits</span>
+					<span class="landing-card__desc">Track your daily habits on a monthly chart</span>
 				</span>
 			</a>
 			<a class="landing-card" href="/bank">
