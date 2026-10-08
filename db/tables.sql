@@ -50,23 +50,26 @@ CREATE TABLE email_verification_tokens (
 	INDEX idx_email_verification_token_hash (token_hash)
 );
 
-CREATE TABLE win_cards (
+CREATE TABLE habits (
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	account_id INT NOT NULL,
-	card_date DATE NOT NULL,
+	title VARCHAR(60) NOT NULL,
+	position TINYINT UNSIGNED NOT NULL DEFAULT 1,
+	created_date DATE NOT NULL,
+	archived_from_month DATE NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	UNIQUE (account_id, card_date),
+	INDEX idx_habits_account (account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
 
-CREATE TABLE win_card_items(
+CREATE TABLE habit_logs (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	card_id INT NOT NULL,
-	title VARCHAR(150) NOT NULL,
-	status ENUM('pending', 'done', 'failed') NOT NULL DEFAULT('pending'),
-	position TINYINT UNSIGNED NOT NULL DEFAULT 0,
-	updated_at TIMESTAMP NULL,
-	FOREIGN KEY (card_id) REFERENCES win_cards(id)
+	habit_id INT NOT NULL,
+	log_date DATE NOT NULL,
+	status ENUM('done', 'failed') NOT NULL,
+	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	UNIQUE (habit_id, log_date),
+	FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE
 );
 
 CREATE TABLE bank_entry_types (
@@ -214,7 +217,6 @@ CREATE TABLE stock_goal_colors (
 	UNIQUE (account_id, stock_key),
 	FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
-
 
 CREATE TABLE sessions (
 	id VARCHAR(128) PRIMARY KEY,
