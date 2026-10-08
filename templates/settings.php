@@ -132,7 +132,7 @@ $settingsReturnPath = settingsReturnPath();
 		<section class="settings-card">
 			<h2 class="settings-card__title">Your data</h2>
 			<p class="settings-card__hint">
-				Download a JSON copy of your profile, bank entries, wins, types, monthly stats, consent history, and bank connection metadata.
+				Download a JSON copy of your profile, bank entries, habits, types, monthly stats, consent history, and bank connection metadata.
 				Passwords and bank session tokens are never included.
 				See our <a href="<?php echo htmlspecialchars(legalPageHref('/privacy')); ?>">Privacy Policy</a> for details.
 			</p>
