@@ -21,7 +21,7 @@ function cssBundleFiles(): array {
 		'08-entry-cards.css',
 		'09-month-history.css',
 		'10-modal-goals.css',
-		'11-wins.css',
+		'11-habits.css',
 		'12-responsive.css',
 		'13-bank-configure.css',
 		'14-onboarding.css',
