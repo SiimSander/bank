@@ -30,6 +30,7 @@ if (str_starts_with($uri, '/assets/')) {
 }
 
 require_once __DIR__ . '/../src/helpers.php';
+require_once __DIR__ . '/../src/numericInput.php';
 require_once __DIR__ . '/../src/database.php';
 require_once __DIR__ . '/../src/mail.php';
 require_once __DIR__ . '/../src/csrf.php';
@@ -130,8 +131,16 @@ switch ($uri) {
 					$account = getAccountByUsername($pdo, $username);
 					if ($account !== null) {
 						recordSignupConsents($pdo, (int) $account['id']);
+						regenerateSessionOnLogin();
+						$_SESSION['user_id'] = $account['id'];
+						$_SESSION['username'] = $account['username'];
+						$_SESSION['name'] = $account['name'];
+						$_SESSION['flash'] = 'Account created. We sent a verification email to ' . $account['email'] . ' - open the link in it to verify your address.';
+						header('Location: /onboarding');
+						exit;
 					}
-					header('Location: /login?signup=1');
+
+					header('Location: /login');
 					exit;
 				}
 
@@ -148,9 +157,6 @@ switch ($uri) {
 		$error = null;
 		$message = null;
 
-		if (isset($_GET['signup'])) {
-			$message = 'Account created. Check your email to verify your account, then log in.';
-		}
 		if (isset($_GET['reset'])) {
 			$message = 'Your password has been updated. You can log in now.';
 		}
@@ -293,7 +299,7 @@ switch ($uri) {
 			db(),
 			(int) $_SESSION['user_id'],
 			(string) ($_POST['note'] ?? ''),
-			(float) ($_POST['amount'] ?? 0)
+			parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0
 		);
 
 		if ($result !== true) {
@@ -371,8 +377,8 @@ switch ($uri) {
 			$incomeValue = trim($_POST['guaranteed_monthly_income'] ?? '');
 			$selectedPlan = $_POST['plan'] ?? '';
 
-			if ($incomeValue === '' || !is_numeric($incomeValue) || (float) $incomeValue <= 0) {
-				$error = 'Enter your guaranteed monthly income as a positive number.';
+			if ((parseMoneyAmount($incomeValue) ?? 0) <= 0) {
+				$error = 'Enter your guaranteed monthly income as a positive number up to 1,000,000,000.';
 			} elseif (!isValidPlanKey($selectedPlan)) {
 				$error = 'Choose a plan to continue.';
 			} else {
@@ -416,10 +422,10 @@ switch ($uri) {
 			$bankBalanceValue = trim($_POST['bank_balance'] ?? '');
 			$cashBalanceValue = trim($_POST['cash_balance'] ?? '');
 
-			if ($bankBalanceValue === '' || !is_numeric($bankBalanceValue) || (float) $bankBalanceValue < 0) {
-				$error = 'Enter your current bank balance as zero or a positive number.';
-			} elseif ($cashBalanceValue === '' || !is_numeric($cashBalanceValue) || (float) $cashBalanceValue < 0) {
-				$error = 'Enter your current cash balance as zero or a positive number.';
+			if (parseMoneyAmount($bankBalanceValue) === null) {
+				$error = 'Enter your current bank balance as zero or a positive number up to 1,000,000,000.';
+			} elseif (parseMoneyAmount($cashBalanceValue) === null) {
+				$error = 'Enter your current cash balance as zero or a positive number up to 1,000,000,000.';
 			} elseif (!applyOpeningBalances($pdo, $accountId, (float) $bankBalanceValue, (float) $cashBalanceValue)) {
 				$error = 'Could not save your opening balances. Try again.';
 			} else {
@@ -571,7 +577,7 @@ switch ($uri) {
 			$type = $_POST['type'] ?? '';
 			$method = $_POST['method'] ?? '';
 			$direction = $_POST['direction'] ?? 'in';
-			$amount = (float) ($_POST['amount'] ?? 0);
+			$amount = parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0;
 			$note = trim($_POST['note'] ?? '');
 			$bankType = getBankTypeBySlug($pdo, $_SESSION['user_id'], $type);
 			$normalizedAmount = $bankType !== null
@@ -674,8 +680,8 @@ switch ($uri) {
 		}
 		requireCsrfToken(true);
 		$incomeValue = trim($_POST['guaranteed_monthly_income'] ?? '');
-		if ($incomeValue === '' || !is_numeric($incomeValue) || (float) $incomeValue <= 0) {
-			echo json_encode(['success' => false, 'error' => 'Enter a positive number for guaranteed monthly income.']);
+		if ((parseMoneyAmount($incomeValue) ?? 0) <= 0) {
+			echo json_encode(['success' => false, 'error' => 'Enter a positive number up to 1,000,000,000 for guaranteed monthly income.']);
 			exit;
 		}
 		setAccountGuaranteedIncome(db(), $_SESSION['user_id'], (float) $incomeValue);
@@ -753,7 +759,7 @@ switch ($uri) {
 		$type = $_POST['type'] ?? '';
 		$method = $_POST['method'] ?? '';
 		$direction = $_POST['direction'] ?? 'in';
-		$amount = (float) ($_POST['amount'] ?? 0);
+		$amount = parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0;
 		$note = trim($_POST['note'] ?? '');
 		$pdo = db();
 		$bankType = getBankTypeBySlug($pdo, $_SESSION['user_id'], $type);
@@ -1125,7 +1131,7 @@ switch ($uri) {
 				requireCsrfToken();
 				$method = $_POST['method'] ?? '';
 				$direction = $_POST['direction'] ?? 'in';
-				$amount = (float) ($_POST['amount'] ?? 0);
+				$amount = parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0;
 				$note = trim($_POST['note'] ?? '');
 				$entryDate = $_POST['entry_date'] ?? '';
 				$currentTypeForPost = getBankTypeBySlug($pdo, $_SESSION['user_id'], $type);
