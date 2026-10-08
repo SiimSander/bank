@@ -1,0 +1,68 @@
+/* Base: design tokens, reset, body */
+
+:root {
+	--color-bg: #121212;
+	--color-surface: #1e1e1e;
+	--color-surface-elevated: #252525;
+	--color-surface-input: #2a2a2a;
+	--color-text: #ffffff;
+	--color-text-muted: #888888;
+	--color-text-subtle: #666666;
+	--color-accent: #22c55e;
+	--color-accent-hover: #16a34a;
+	--color-danger: #ef4444;
+	--color-danger-dark: #7f1d1d;
+	--color-income: #22c55e;
+	--color-income-bg: rgba(34, 197, 94, 0.12);
+	--color-expenses: #f472b6;
+	--color-expenses-bg: rgba(244, 114, 182, 0.12);
+	--color-investments: #a78bfa;
+	--color-investments-bg: rgba(167, 139, 250, 0.12);
+	--color-savings: #60a5fa;
+	--color-savings-bg: rgba(96, 165, 250, 0.12);
+	--color-pension: #fb923c;
+	--color-pension-bg: rgba(251, 146, 60, 0.12);
+	--color-behind: #e5e7eb;
+	--color-behind-bg: rgba(229, 231, 235, 0.1);
+	--color-wins-list: #2d1b1e;
+	--radius-card: 12px;
+	--radius-pill: 999px;
+	--header-height: 56px;
+	--nav-height: 64px;
+	--app-max: 100%;
+	--sidebar-width: 0px;
+	--modal-max: 480px;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	font-size: 16px;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+body.modal-open {
+	overflow: hidden;
+}
+
+a {
+	color: inherit;
+}
+
+.icon {
+	width: 1.25rem;
+	height: 1.25rem;
+	display: block;
+	flex-shrink: 0;
+}
+
