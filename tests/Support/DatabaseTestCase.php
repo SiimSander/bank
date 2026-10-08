@@ -11,6 +11,7 @@ abstract class DatabaseTestCase extends TestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
+		putenv('TEST_TODAY=2026-09-15');
 		$this->pdo = db();
 		$this->truncateTables();
 	}
@@ -18,8 +19,8 @@ abstract class DatabaseTestCase extends TestCase {
 	protected function truncateTables(): void {
 		$this->pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 		foreach ([
-			'win_card_items',
-			'win_cards',
+			'habit_logs',
+			'habits',
 			'bank_entry_type_income_percent_history',
 			'bank_entries',
 			'monthly_stat_by_type',
