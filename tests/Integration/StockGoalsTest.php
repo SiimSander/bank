@@ -89,21 +89,36 @@ final class StockGoalsTest extends DatabaseTestCase {
 		self::assertNull($rows[1]['percent']);
 	}
 
-	public function testGoalStocksAreOrderedFromBiggestGoalToLowest(): void {
+	public function testGoalStocksAreOrderedFromMostInvestedToLeastThenBiggestGoal(): void {
 		$accountId = $this->createTestAccount();
 		$this->seedTypes($accountId);
 		$this->insertGoal($accountId, self::WISE, 400, '2026-09-01');
 		$this->insertGoal($accountId, 'Bitcoin (€BTC)', 200, '2026-09-01');
 		$this->insertGoal($accountId, self::VUAA, 800, '2026-09-01');
-		$this->insertGoal($accountId, 'Apple (€AAPL)', 200, '2026-09-01');
+		$this->insertGoal($accountId, 'Apple (€AAPL)', 300, '2026-09-01');
+		$this->insertGoal($accountId, 'Zeta (€ZETA)', 100, '2026-09-01');
 		$this->addEntry($accountId, 'investments', 400, '2026-09-02', note: self::WISE);
+		$this->addEntry($accountId, 'investments', 150, '2026-09-03', note: self::VUAA);
 
 		$rows = getStockGoalRows($this->pdo, $accountId, '2026-09-01');
 
 		self::assertSame(
-			[self::VUAA, self::WISE, 'Apple (€AAPL)', 'Bitcoin (€BTC)'],
+			[self::WISE, self::VUAA, 'Apple (€AAPL)', 'Bitcoin (€BTC)', 'Zeta (€ZETA)'],
 			array_column($rows, 'note')
 		);
+	}
+
+	public function testRingSectorsFollowTheMostInvestedOrder(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+		$this->insertGoal($accountId, self::VUAA, 800, '2026-09-01');
+		$this->insertGoal($accountId, self::WISE, 400, '2026-09-01');
+		$this->addEntry($accountId, 'investments', 100, '2026-09-02', note: self::VUAA);
+		$this->addEntry($accountId, 'investments', 300, '2026-09-03', note: self::WISE);
+
+		$sectors = getStockRingSectors(getStockGoalRows($this->pdo, $accountId, '2026-09-01'));
+
+		self::assertSame([stockGoalKey(self::WISE), stockGoalKey(self::VUAA)], array_column($sectors, 'key'));
 	}
 
 	public function testMissedAmountFromLastMonthIsCaughtUpByExtraThisMonth(): void {
