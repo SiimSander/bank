@@ -248,11 +248,16 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 							))); ?>">
 								<?php
 								$carryFrom = implode(', ', array_map($carryMonthLabel, $row['carry_months']));
-								$missingText = $money($row['catch_up_left']) . ($row['catch_up_left'] < $row['carry_missed'] ? ' still' : '') . ' missing from ' . $carryFrom;
+								$missingWords = ($row['catch_up_left'] < $row['carry_missed'] ? 'still ' : '') . 'missing';
 
 								if ($isCurrentStockMonth) {
-									$toGo = $row['invested'] > 0 ? ' ' . $money($row['target'] - $row['invested']) . ' to go.' : '';
-									echo $escape($missingText . '. Aim for ' . $money($row['target']) . ' this month to catch up.' . $toGo);
+									$showToGo = $row['invested'] > 0 && $row['invested'] < $row['goal'];
+									echo '<span class="stock-card__note-line"><strong>' . $escape($money($row['catch_up_left'])) . ' <span class="stock-card__note-alert">' . $escape($missingWords) . '</span></strong> ' . $escape('from ' . $carryFrom . '.') . '</span>';
+									echo '<span class="stock-card__note-line">' . $escape('Aim for ' . $money($row['target']) . ' this month to catch up.') . '</span>';
+
+									if ($showToGo) {
+										echo '<strong class="stock-card__note-line">' . $escape($money($row['target'] - $row['invested']) . ' to go.') . '</strong>';
+									}
 								} else {
 									echo $escape($money($row['catch_up_left']) . ' from ' . $carryFrom . ' was still missing this month.');
 								}
