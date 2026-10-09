@@ -65,6 +65,12 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 				<h1 class="page-title">Stock Goals</h1>
 				<p class="page-subtitle">Set how much you want to invest into each stock every month.</p>
 			</div>
+			<?php if ($isCurrentStockMonth): ?>
+				<button type="button" class="btn btn-secondary stock-goals__add js-stock-goal-add">
+					<?php icon('plus'); ?>
+					Add stock
+				</button>
+			<?php endif; ?>
 		</div>
 
 		<nav class="stock-month-switcher" aria-label="Month">
@@ -319,7 +325,7 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 		<?php if ($stockGoalRows === []): ?>
 			<section class="stock-empty">
 				<p class="stock-empty__title">No stocks yet</p>
-				<p class="stock-empty__text">Record an investment with a note, or add a stock goal to get started.</p>
+				<p class="stock-empty__text">Record an investment with a note, or use "Add stock" to plan one before you invest.</p>
 			</section>
 		<?php endif; ?>
 
@@ -389,6 +395,11 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 				<button type="button" class="modal__close js-stock-goal-close" aria-label="Close">&times;</button>
 			</div>
 			<form class="stock-goal-form js-stock-goal-form" novalidate>
+				<div class="form-field js-stock-goal-name-field" hidden>
+					<label for="stock-goal-name">Stock</label>
+					<input type="text" id="stock-goal-name" class="js-stock-goal-name" maxlength="<?php echo $escape(STOCK_GOAL_NOTE_MAX_LENGTH); ?>" placeholder="Vanguard S&amp;P 500 (€VUAA)" autocomplete="off">
+					<p class="form-field__hint">We recommend this stock note format: Stock name (€TICKER)</p>
+				</div>
 				<div class="form-field">
 					<label for="stock-goal-amount">Monthly goal (€)</label>
 					<input type="number" id="stock-goal-amount" class="js-stock-goal-amount" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="800">
