@@ -517,8 +517,11 @@ const initStockGoalModal = () => {
 	const $error = $modal.querySelector('.js-stock-goal-error');
 	const $remove = $modal.querySelector('.js-stock-goal-remove');
 	const $save = $modal.querySelector('.js-stock-goal-save');
+	const $nameField = $modal.querySelector('.js-stock-goal-name-field');
+	const $name = $modal.querySelector('.js-stock-goal-name');
 
 	let editedNote = null;
+	let isAddingStock = false;
 
 	const showError = (message) => {
 		$error.textContent = message;
@@ -536,7 +539,22 @@ const initStockGoalModal = () => {
 		document.body.classList.remove('modal-open');
 	};
 
+	const openForAdd = () => {
+		isAddingStock = true;
+		editedNote = null;
+		$title.textContent = 'Add stock';
+		$subtitle.textContent = 'Plan a stock before you invest in it. Applies from this month on.';
+		$nameField.hidden = false;
+		$name.value = '';
+		$amount.value = '';
+		$remove.hidden = true;
+		open();
+		$name.focus();
+	};
+
 	const openForEdit = ({ note, name, goal }) => {
+		isAddingStock = false;
+		$nameField.hidden = true;
 		editedNote = note;
 		$title.textContent = Number(goal) > 0 ? `Edit goal: ${name}` : `Set goal: ${name}`;
 		$subtitle.textContent = 'Applies from this month on. Past months keep their old goal.';
@@ -554,7 +572,7 @@ const initStockGoalModal = () => {
 			const response = await fetch('/stock-goals/save', {
 				method: 'POST',
 				headers: window.csrfHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-				body: `note=${encodeURIComponent(note)}&amount=${encodeURIComponent(amount)}`,
+				body: `note=${encodeURIComponent(note)}&amount=${encodeURIComponent(amount)}${isAddingStock ? '&new_stock=1' : ''}`,
 			});
 			const result = await response.json().catch(() => ({}));
 
@@ -577,8 +595,18 @@ const initStockGoalModal = () => {
 		$button.addEventListener('click', () => openForEdit($button.dataset));
 	});
 
+	document.querySelectorAll('.js-stock-goal-add').forEach(($button) => {
+		$button.addEventListener('click', openForAdd);
+	});
+
 	$form.addEventListener('submit', (event) => {
 		event.preventDefault();
+
+		if (isAddingStock && $name.value.trim() === '') {
+			showError('Enter the stock name.');
+
+			return;
+		}
 
 		const amount = parseFloat($amount.value);
 
@@ -588,7 +616,7 @@ const initStockGoalModal = () => {
 			return;
 		}
 
-		submit(amount, editedNote);
+		submit(amount, isAddingStock ? $name.value.trim() : editedNote);
 	});
 
 	$remove.addEventListener('click', () => {
