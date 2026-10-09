@@ -23,6 +23,16 @@
 	color: var(--color-text-muted);
 }
 
+.form-field__hint {
+	margin: 0;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+.form-field__hint[hidden] {
+	display: none;
+}
+
 .form-field input,
 .form-field select,
 .form-field textarea {
