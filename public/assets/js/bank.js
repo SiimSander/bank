@@ -157,28 +157,47 @@ if ($bankAddForm && $bankAddTypeSelect && $bankAddMethodSelect) {
 		}
 	};
 
+	const setNotePlaceholder = (key) => {
+		$noteInput.placeholder = $noteInput.dataset[key] ?? $noteInput.dataset.placeholderDefault ?? '';
+	};
+
+	const $noteHint = $noteField?.querySelector('.js-bank-note-hint');
+
 	const syncInvestmentStockField = () => {
-		if (!$stockField || !$stockSelect || !$noteField || !$noteInput) {
+		if (!$noteField || !$noteInput) {
 			return;
 		}
 
 		const isInvestments = $bankAddTypeSelect.value === 'investments';
 
-		$stockField.hidden = !isInvestments;
+		if ($stockField) {
+			$stockField.hidden = !isInvestments;
+		}
 
 		if (!isInvestments) {
 			clearAutoFilledNote();
 			$noteField.hidden = false;
+			setNotePlaceholder('placeholderDefault');
+
+			if ($noteHint) {
+				$noteHint.hidden = true;
+			}
+
 			return;
 		}
 
-		const $selectedStock = $stockSelect.options[$stockSelect.selectedIndex];
-		const isNewStock = $selectedStock?.dataset.newStock === '1';
+		const $selectedStock = $stockSelect?.options[$stockSelect.selectedIndex];
+		const isNewStock = !$stockSelect || $selectedStock?.dataset.newStock === '1';
 
 		$noteField.hidden = !isNewStock;
 
+		if ($noteHint) {
+			$noteHint.hidden = !isNewStock;
+		}
+
 		if (isNewStock) {
 			clearAutoFilledNote();
+			setNotePlaceholder('placeholderNewStock');
 			return;
 		}
 
@@ -229,6 +248,9 @@ document.querySelectorAll('.js-bank-type-form').forEach(($form) => {
 
 			$noteField.hidden = !isNewStock;
 			$noteInput.value = isNewStock ? '' : $stockSelect.value;
+			$noteInput.placeholder = isNewStock
+				? ($noteInput.dataset.placeholderNewStock ?? $noteInput.dataset.placeholderDefault ?? '')
+				: ($noteInput.dataset.placeholderDefault ?? '');
 
 			return isNewStock;
 		};
