@@ -458,6 +458,14 @@ a.stock-month-switcher__arrow:hover {
 	cursor: help;
 }
 
+.stock-card__note-line {
+	display: block;
+}
+
+.stock-card__note-alert {
+	color: var(--color-danger);
+}
+
 .stock-card__note--covered {
 	color: var(--stock-color, var(--color-investments));
 }
@@ -721,6 +729,15 @@ a.stock-month-switcher__arrow:hover {
 	stroke-dasharray: 6 5;
 	opacity: 0.85;
 	pointer-events: none;
+	transition: opacity 0.15s ease;
+}
+
+.stock-chart__svg--focus-goal .stock-chart__goal-path {
+	opacity: 0;
+}
+
+.stock-chart__svg--focus-goal .stock-chart__goal-path--active {
+	opacity: 1;
 }
 
 .stock-chart__tooltip {
