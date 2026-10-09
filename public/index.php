@@ -311,7 +311,8 @@ switch ($uri) {
 			db(),
 			(int) $_SESSION['user_id'],
 			(string) ($_POST['note'] ?? ''),
-			parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0
+			parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0,
+			($_POST['new_stock'] ?? '') === '1'
 		);
 
 		if ($result !== true) {
