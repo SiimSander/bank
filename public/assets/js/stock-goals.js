@@ -207,12 +207,18 @@ const initStockGoalsChart = () => {
 
 		const barWidth = Math.min(24, (layout.band - CHART_BAND_PADDING) / count - CHART_BAR_GAP);
 		const groupWidth = count * barWidth + (count - 1) * CHART_BAR_GAP;
+		const goalPaths = new Map();
+
+		const focusGoalLine = (seriesKey) => {
+			$svg.classList.toggle('stock-chart__svg--focus-goal', seriesKey !== null);
+			goalPaths.forEach(($path, key) => $path.classList.toggle('stock-chart__goal-path--active', key === seriesKey));
+		};
 
 		months.forEach((month, monthIndex) => {
 			const groupStart = CHART_PADDING.left + layout.band * monthIndex + (layout.band - groupWidth) / 2;
 			addMonthLabel($svg, month, monthIndex, CHART_PADDING.left + layout.band * (monthIndex + 0.5), CHART_HEIGHT - 10);
 
-			visible.forEach(({ series, color }, seriesIndex) => {
+			visible.forEach(({ series, color, index }, seriesIndex) => {
 				const point = series.points[monthIndex];
 				const value = valueOf(point);
 				const x = groupStart + seriesIndex * (barWidth + CHART_BAR_GAP);
@@ -231,12 +237,18 @@ const initStockGoalsChart = () => {
 					fill: color,
 				});
 				bindTooltip($bar, { title: seriesLabel(series), color, lines: summaryLines(point) });
+
+				if (mode === 'euro') {
+					$bar.addEventListener('pointerenter', () => focusGoalLine(index));
+					$bar.addEventListener('pointerleave', () => focusGoalLine(null));
+				}
+
 				$svg.append($bar);
 			});
 		});
 
 		if (mode === 'euro') {
-			visible.forEach(({ series, color }, seriesIndex) => {
+			visible.forEach(({ series, color, index }, seriesIndex) => {
 				const path = series.points
 					.map((point, monthIndex) => {
 						if (point.goal <= 0) {
@@ -252,12 +264,14 @@ const initStockGoalsChart = () => {
 					.join(' ');
 
 				if (path.trim() !== '') {
-					$svg.append(createSvgElement('path', {
+					const $goalPath = createSvgElement('path', {
 						class: 'stock-chart__goal-path',
 						d: path,
 						stroke: color,
 						'stroke-dashoffset': seriesIndex * 3,
-					}));
+					});
+					goalPaths.set(index, $goalPath);
+					$svg.append($goalPath);
 				}
 			});
 		}
