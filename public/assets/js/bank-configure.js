@@ -378,9 +378,9 @@ if (projectionIncomeInput) {
 			projectionIncomeError.textContent = '';
 		}
 
-		if (value === '' || !Number.isFinite(parseFloat(value)) || parseFloat(value) <= 0) {
+		if (value === '' || !Number.isFinite(parseFloat(value)) || parseFloat(value) < 0) {
 			if (projectionIncomeError) {
-				projectionIncomeError.textContent = 'Enter a positive number for guaranteed monthly income.';
+				projectionIncomeError.textContent = 'Enter 0 or a positive number for guaranteed monthly income.';
 				projectionIncomeError.hidden = false;
 			}
 			return;
