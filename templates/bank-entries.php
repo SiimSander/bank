@@ -77,7 +77,10 @@ foreach ($entries as $entry) {
 						<?php endif; ?>
 						<div class="form-field js-bank-type-note-field">
 							<label for="entry-note">Note (optional)</label>
-							<input type="text" name="note" id="entry-note" maxlength="150" placeholder="Max 150 chars">
+							<input type="text" name="note" id="entry-note" maxlength="150" placeholder="Max 150 chars" data-placeholder-default="Max 150 chars" data-placeholder-new-stock="Type the new stock name or ticker">
+							<?php if ($type === 'investments'): ?>
+								<p class="form-field__hint">We recommend this stock note format: Stock name (€TICKER)</p>
+							<?php endif; ?>
 						</div>
 						<button class="btn btn-primary js-bank-submit-btn" type="submit">
 							<?php icon('plus'); ?>
