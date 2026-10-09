@@ -2,6 +2,8 @@ const incomeInput = document.querySelector('#onboarding-income');
 const submitButton = document.querySelector('.js-onboarding-submit');
 const planCards = document.querySelectorAll('.js-plan-card');
 
+const isValidIncome = (income) => Number.isFinite(income) && income >= 0;
+
 const hexToRgba = (hex, alpha) => {
 	const clean = hex.replace('#', '');
 	const r = parseInt(clean.substring(0, 2), 16);
@@ -32,7 +34,7 @@ const renderProjection = (card) => {
 
 	projectionEl.innerHTML = '';
 
-	if (!income || income <= 0) {
+	if (!isValidIncome(income)) {
 		return;
 	}
 
@@ -57,7 +59,7 @@ const updateSubmitState = () => {
 	const income = parseFloat(incomeInput.value);
 	const hasSelection = document.querySelector('.js-plan-radio:checked') !== null;
 
-	submitButton.disabled = !(income > 0 && hasSelection);
+	submitButton.disabled = !(isValidIncome(income) && hasSelection);
 };
 
 incomeInput.addEventListener('input', () => {
