@@ -12,7 +12,7 @@ $incomeType = array_values(array_filter(
 	<div class="onboarding-card">
 		<h1>Let's set up your plan</h1>
 		<p class="onboarding-subtitle">Enter your guaranteed monthly income, then pick a starting plan. You can change everything later in Configure.</p>
-		<p class="onboarding-subtitle">(based on the monthly income, You can see what You can achieve in 12 months)</p>
+		<p class="onboarding-subtitle">(Based on the guaranteed monthly income, see what You can achieve in 12 months)</p>
 
 		<?php if ($error !== null): ?>
 			<p class="auth-error"><?php echo htmlspecialchars($error); ?></p>
