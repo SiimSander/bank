@@ -599,7 +599,7 @@ function getStockGoalRows(PDO $pdo, int $userId, string $month): array {
 		}
 
 		if ($a['has_goal']) {
-			return [$b['goal'], $a['name']] <=> [$a['goal'], $b['name']];
+			return [$b['invested'], $b['goal'], $a['name']] <=> [$a['invested'], $a['goal'], $b['name']];
 		}
 
 		return [$b['invested'], $a['name']] <=> [$a['invested'], $b['name']];
