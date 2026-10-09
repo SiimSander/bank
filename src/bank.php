@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/BankRequestCache.php';
 require_once __DIR__ . '/Clock.php';
 require_once __DIR__ . '/bankTypes.php';
 require_once __DIR__ . '/goalCalculations.php';
@@ -270,12 +271,18 @@ function getPotBalances(PDO $pdo, int $userId, bool $activeOnly = true): array {
 	$types = getBankTypes($pdo, $userId, $activeOnly);
 	$balances = [];
 
+	$sumsByType = $pdo->prepare(
+		'SELECT type, COALESCE(SUM(amount), 0) FROM bank_entries WHERE account_id = ? GROUP BY type'
+	);
+	$sumsByType->execute([$userId]);
+	$sumsBySlug = $sumsByType->fetchAll(PDO::FETCH_KEY_PAIR);
+
 	foreach ($types as $type) {
 		if ($type['balance_mode'] !== 'pot') {
 			continue;
 		}
 
-		$balances[$type['slug']] = getPotBalance($pdo, $userId, $type['slug']);
+		$balances[$type['slug']] = (float) ($sumsBySlug[$type['slug']] ?? 0);
 	}
 
 	return $balances;
@@ -582,6 +589,30 @@ function getTypeBreakdownAllTime(PDO $pdo, int $userId, string $typeSlug): array
 	return getTypeBreakdownByNote($pdo, $userId, $typeSlug, null, Clock::today());
 }
 
+/**
+ * Stocks on the user's stock goal plan, so they can be picked in the stock dropdowns before any money is invested in them.
+ *
+ * @return array<int, string> stock notes whose latest goal is above zero
+ */
+function getPlannedStockNotes(PDO $pdo, int $userId): array {
+	$rawSql = $pdo->prepare(
+		'SELECT goal.stock_note
+		FROM stock_goals goal
+		WHERE goal.account_id = ? AND goal.monthly_amount > 0
+			AND goal.effective_from = (
+				SELECT MAX(latest.effective_from)
+				FROM stock_goals latest
+				WHERE latest.account_id = goal.account_id
+					AND latest.stock_note = goal.stock_note
+					AND latest.effective_from <= ?
+			)
+		ORDER BY goal.stock_note ASC'
+	);
+	$rawSql->execute([$userId, Clock::today()]);
+
+	return $rawSql->fetchAll(PDO::FETCH_COLUMN);
+}
+
 function getInvestmentBreakdownByNote(PDO $pdo, int $userId, ?string $startDate, string $endDate): array {
 	return getTypeBreakdownByNote($pdo, $userId, 'investments', $startDate, $endDate);
 }
@@ -624,11 +655,22 @@ function getInvestmentNotes(PDO $pdo, int $userId): array {
 	$rawSql->execute([$userId]);
 
 	$notes = [];
+	$knownKeys = [];
 	foreach ($rawSql->fetchAll() as $row) {
+		$knownKeys[] = mb_strtolower(trim($row['note']));
 		$notes[] = [
 			'note' => $row['note'],
 			'label' => investmentNoteTickerLabel($row['note']),
 		];
+	}
+
+	foreach (getPlannedStockNotes($pdo, $userId) as $plannedNote) {
+		if (!in_array(mb_strtolower(trim($plannedNote)), $knownKeys, true)) {
+			$notes[] = [
+				'note' => $plannedNote,
+				'label' => investmentNoteTickerLabel($plannedNote),
+			];
+		}
 	}
 
 	return $notes;
@@ -1078,6 +1120,16 @@ function computeMonthlyGoalGapForMissing(float $goal, float $actual, array $type
  * @return array<string, float> signed catch-up balance per type (positive = still missing)
  */
 function computeOverallGoalCatchUpBalancesByType(PDO $pdo, int $userId): array {
+	return BankRequestCache::remember(
+		'overall_goal_catch_up:' . $userId,
+		fn(): array => buildOverallGoalCatchUpBalancesByType($pdo, $userId)
+	);
+}
+
+/**
+ * @return array<string, float>
+ */
+function buildOverallGoalCatchUpBalancesByType(PDO $pdo, int $userId): array {
 	$goalTypes = array_values(array_filter(
 		getGoalTrackingTypes(getBankTypes($pdo, $userId)),
 		static fn(array $type) => $type['slug'] !== 'expenses'
