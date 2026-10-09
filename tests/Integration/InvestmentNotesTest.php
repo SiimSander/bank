@@ -34,6 +34,61 @@ final class InvestmentNotesTest extends DatabaseTestCase {
 		self::assertSame([], getInvestmentNotes($this->pdo, $accountId));
 	}
 
+	public function testPlannedStockWithoutEntriesIsListedAfterInvestedStocks(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+
+		$this->addEntry($accountId, 'investments', 100, '2026-01-05', note: 'Wise (£WISE)');
+		self::assertTrue(setStockGoal($this->pdo, $accountId, 'Bitcoin (₿BTC)', 50, true));
+
+		self::assertSame([
+			['note' => 'Wise (£WISE)', 'label' => '£WISE'],
+			['note' => 'Bitcoin (₿BTC)', 'label' => '₿BTC'],
+		], getInvestmentNotes($this->pdo, $accountId));
+	}
+
+	public function testPlannedStockAlreadyInvestedInIsNotListedTwice(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+
+		$this->addEntry($accountId, 'investments', 100, '2026-01-05', note: 'Wise (£WISE)');
+		self::assertTrue(setStockGoal($this->pdo, $accountId, 'wise (£wise)', 50, true));
+
+		self::assertSame([['note' => 'Wise (£WISE)', 'label' => '£WISE']], getInvestmentNotes($this->pdo, $accountId));
+	}
+
+	public function testStockWhoseGoalWasRemovedIsNoLongerListed(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+
+		setStockGoal($this->pdo, $accountId, 'Bitcoin (₿BTC)', 50, true);
+		setStockGoal($this->pdo, $accountId, 'Bitcoin (₿BTC)', 0);
+
+		self::assertSame([], getInvestmentNotes($this->pdo, $accountId));
+	}
+
+	public function testBreakdownIgnoresPlannedStockWithoutEntries(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+
+		$this->addEntry($accountId, 'investments', 100, '2026-09-05', note: 'Wise (£WISE)');
+		setStockGoal($this->pdo, $accountId, 'Bitcoin (₿BTC)', 50, true);
+
+		self::assertSame(
+			[['note' => 'Wise (£WISE)', 'amount' => 100.0]],
+			getInvestmentBreakdownByNote($this->pdo, $accountId, '2026-09-01', '2026-09-30')
+		);
+	}
+
+	public function testAddingAStockThatAlreadyHasAGoalIsRejected(): void {
+		$accountId = $this->createTestAccount();
+
+		setStockGoal($this->pdo, $accountId, 'Bitcoin (₿BTC)', 50, true);
+
+		self::assertIsString(setStockGoal($this->pdo, $accountId, 'bitcoin (₿btc)', 80, true));
+		self::assertIsString(setStockGoal($this->pdo, $accountId, 'Wise (£WISE)', 0, true));
+	}
+
 	public function testOnlyReturnsNotesOfRequestedAccount(): void {
 		$accountId = $this->createTestAccount();
 		$otherAccountId = $this->createTestAccount();
