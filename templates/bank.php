@@ -182,7 +182,8 @@ foreach ($bankTypes as $bankType) {
 				<?php endif; ?>
 				<div class="form-field js-bank-add-note-field">
 					<label for="bank-add-note">Note (optional)</label>
-					<input type="text" name="note" id="bank-add-note" maxlength="150" placeholder="Max 150 chars">
+					<input type="text" name="note" id="bank-add-note" maxlength="50" placeholder="Max 50 chars" data-placeholder-default="Max 50 chars" data-placeholder-new-stock="Vanguard S&P 500 (€VUAA)">
+					<p class="form-field__hint js-bank-note-hint" hidden>We recommend this stock note format: Stock name (€TICKER)</p>
 				</div>
 				<button class="btn btn-primary js-bank-submit-btn" type="submit">
 					<?php icon('plus'); ?>
