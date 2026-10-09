@@ -390,8 +390,8 @@ switch ($uri) {
 			$incomeValue = trim($_POST['guaranteed_monthly_income'] ?? '');
 			$selectedPlan = $_POST['plan'] ?? '';
 
-			if ((parseMoneyAmount($incomeValue) ?? 0) <= 0) {
-				$error = 'Enter your guaranteed monthly income as a positive number up to 1,000,000,000.';
+			if (parseMoneyAmount($incomeValue) === null) {
+				$error = 'Enter your guaranteed monthly income as 0 or a positive number up to 1,000,000,000.';
 			} elseif (!isValidPlanKey($selectedPlan)) {
 				$error = 'Choose a plan to continue.';
 			} else {
@@ -658,8 +658,8 @@ switch ($uri) {
 		}
 		requireCsrfToken(true);
 		$incomeValue = trim($_POST['guaranteed_monthly_income'] ?? '');
-		if ((parseMoneyAmount($incomeValue) ?? 0) <= 0) {
-			echo json_encode(['success' => false, 'error' => 'Enter a positive number up to 1,000,000,000 for guaranteed monthly income.']);
+		if (parseMoneyAmount($incomeValue) === null) {
+			echo json_encode(['success' => false, 'error' => 'Enter 0 or a positive number up to 1,000,000,000 for guaranteed monthly income.']);
 			exit;
 		}
 		setAccountGuaranteedIncome(db(), $_SESSION['user_id'], (float) $incomeValue);
