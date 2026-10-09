@@ -779,7 +779,7 @@ function getStockGoalChartSeries(PDO $pdo, int $userId): array {
 /**
  * @return true|string true on success, otherwise an error message
  */
-function setStockGoal(PDO $pdo, int $userId, string $note, float $amount): bool|string {
+function setStockGoal(PDO $pdo, int $userId, string $note, float $amount, bool $isNewStock = false): bool|string {
 	$note = trim($note);
 
 	if ($note === '' || mb_strlen($note) > STOCK_GOAL_NOTE_MAX_LENGTH) {
@@ -792,6 +792,16 @@ function setStockGoal(PDO $pdo, int $userId, string $note, float $amount): bool|
 
 	$amount = round($amount, 2);
 	$existing = getStockGoalHistory($pdo, $userId)[stockGoalKey($note)] ?? null;
+
+	if ($isNewStock) {
+		if ($amount <= 0) {
+			return 'Enter a monthly goal above 0.';
+		}
+
+		if ($existing !== null && getStockGoalAmountForMonth($existing['history'], Clock::monthStart()) > 0) {
+			return 'This stock already has a goal. Edit it from its card instead.';
+		}
+	}
 
 	if ($amount <= 0 && $existing === null) {
 		return true;
