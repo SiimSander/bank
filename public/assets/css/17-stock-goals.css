@@ -19,6 +19,27 @@
 	margin-bottom: 0;
 }
 
+.stock-goals__add {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.55rem 1.1rem;
+	font-size: 0.9rem;
+	color: #000;
+	background-color: var(--color-accent);
+	border-color: transparent;
+	white-space: nowrap;
+}
+
+.stock-goals__add:hover {
+	background-color: var(--color-accent-hover);
+}
+
+.stock-goals__add .icon {
+	width: 1rem;
+	height: 1rem;
+}
+
 .stock-goals__notice {
 	margin: 0;
 	padding: 0.625rem 0.875rem;
