@@ -1,6 +1,6 @@
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const CHART_HEIGHT = 300;
-const CHART_PADDING = { top: 16, right: 20, bottom: 32, left: 44 };
+const CHART_HEIGHT = 328;
+const CHART_PADDING = { top: 44, right: 20, bottom: 32, left: 44 };
 const MIN_MONTH_WIDTH = 56;
 const tickerLabel = (ticker) => ticker.replace(/^\(|\)$/g, '');
 
@@ -21,6 +21,21 @@ const createSvgElement = (tag, attributes = {}) => {
 
 	return element;
 };
+
+const formatBarLabel = (point) => {
+	const invested = Math.round(point.invested);
+
+	return point.goal > 0 ? `${invested}/${Math.round(point.goal)}` : `${invested}`;
+};
+
+const TOUCH_SCROLL_LOCK_PX = 28;
+const CHART_READOUT_BOTTOM = 38;
+const CHART_READOUT_LINE_HEIGHT = 16;
+const CHART_READOUT_MARKER_GAP = 14;
+const CHART_READOUT_MIN_AMOUNT_Y = 30;
+const CHART_READOUT_HALF_WIDTH = 48;
+
+const formatReadoutDate = (date) => date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 const CHART_VIEWS = ['bars', 'cumulative'];
 const CHART_MODES = ['percent', 'euro'];
@@ -199,33 +214,39 @@ const initStockGoalsChart = () => {
 		const months = data.months;
 		const count = Math.max(visible.length, 1);
 		const layout = getLayout(months.length, Math.max(MIN_MONTH_WIDTH, count * 16 + CHART_BAND_PADDING));
-		const valueOf = (point) => (mode === 'percent' ? point.percent : point.invested);
+		const valueOf = (point) => {
+			if (mode === 'percent') {
+				return point.percent;
+			}
+
+			return point.goal > 0 ? point.invested : null;
+		};
 
 		const maxValue = Math.max(0, ...visible.flatMap(({ series }) => series.points.flatMap((point) => [valueOf(point) ?? 0, mode === 'euro' ? point.goal : 0])));
 		const $svg = createChartSvg(layout.width, CHART_HEIGHT);
 		const yFor = createValueAxis($svg, layout, maxValue, mode);
 
 		const barWidth = Math.min(24, (layout.band - CHART_BAND_PADDING) / count - CHART_BAR_GAP);
-		const groupWidth = count * barWidth + (count - 1) * CHART_BAR_GAP;
 		const goalPaths = new Map();
 
 		const focusGoalLine = (seriesKey) => {
 			$svg.classList.toggle('stock-chart__svg--focus-goal', seriesKey !== null);
-			goalPaths.forEach(($path, key) => $path.classList.toggle('stock-chart__goal-path--active', key === seriesKey));
+			goalPaths.forEach(($paths, key) => $paths.forEach(($path) => $path.classList.toggle('stock-chart__goal-path--active', key === seriesKey)));
 		};
 
 		months.forEach((month, monthIndex) => {
-			const groupStart = CHART_PADDING.left + layout.band * monthIndex + (layout.band - groupWidth) / 2;
 			addMonthLabel($svg, month, monthIndex, CHART_PADDING.left + layout.band * (monthIndex + 0.5), CHART_HEIGHT - 10);
 
-			visible.forEach(({ series, color, index }, seriesIndex) => {
+			const monthSeries = visible
+				.filter(({ series }) => (valueOf(series.points[monthIndex]) ?? 0) > 0)
+				.sort((a, b) => b.series.points[monthIndex].invested - a.series.points[monthIndex].invested);
+			const monthGroupWidth = monthSeries.length * barWidth + Math.max(monthSeries.length - 1, 0) * CHART_BAR_GAP;
+			const groupStart = CHART_PADDING.left + layout.band * monthIndex + (layout.band - monthGroupWidth) / 2;
+
+			monthSeries.forEach(({ series, color, index }, seriesIndex) => {
 				const point = series.points[monthIndex];
 				const value = valueOf(point);
 				const x = groupStart + seriesIndex * (barWidth + CHART_BAR_GAP);
-
-				if (value === null || value <= 0) {
-					return;
-				}
 
 				const $bar = createSvgElement('rect', {
 					class: 'stock-chart__bar',
@@ -244,35 +265,70 @@ const initStockGoalsChart = () => {
 				}
 
 				$svg.append($bar);
+
+				const labelX = x + barWidth / 2;
+				const $label = createSvgElement('text', {
+					class: 'stock-chart__bar-label',
+					x: labelX,
+					y: yFor(value) - 5,
+					transform: `rotate(-90 ${labelX} ${yFor(value) - 5})`,
+					fill: color,
+				});
+				$label.textContent = formatBarLabel(point);
+				$svg.append($label);
 			});
 		});
 
 		if (mode === 'euro') {
+			const buildLevelPath = (levels) => levels
+				.map((level, monthIndex) => {
+					if (level === null) {
+						return '';
+					}
+
+					const x0 = CHART_PADDING.left + layout.band * monthIndex;
+					const y = yFor(level);
+					const continues = monthIndex > 0 && levels[monthIndex - 1] !== null;
+
+					return `${continues ? `V ${y}` : `M ${x0} ${y}`} H ${x0 + layout.band}`;
+				})
+				.join(' ');
+
 			visible.forEach(({ series, color, index }, seriesIndex) => {
-				const path = series.points
-					.map((point, monthIndex) => {
-						if (point.goal <= 0) {
-							return '';
-						}
+				const goals = series.points.map((point) => point.goal);
+				const firstGoal = goals.find((goal) => goal > 0) ?? null;
+				let lastGoal = null;
 
-						const x0 = CHART_PADDING.left + layout.band * monthIndex;
-						const y = yFor(point.goal);
-						const continues = monthIndex > 0 && series.points[monthIndex - 1].goal > 0;
+				const goalLevels = goals.map((goal) => (goal > 0 ? goal : null));
+				const idleLevels = goals.map((goal) => {
+					if (goal > 0) {
+						lastGoal = goal;
 
-						return `${continues ? `V ${y}` : `M ${x0} ${y}`} H ${x0 + layout.band}`;
-					})
-					.join(' ');
+						return null;
+					}
 
-				if (path.trim() !== '') {
+					return lastGoal ?? firstGoal;
+				});
+
+				const paths = [
+					{ d: buildLevelPath(goalLevels), className: 'stock-chart__goal-path', stroke: color },
+					{ d: buildLevelPath(idleLevels), className: 'stock-chart__goal-path stock-chart__goal-path--idle', stroke: null },
+				];
+
+				paths.forEach(({ d, className, stroke }) => {
+					if (d.trim() === '') {
+						return;
+					}
+
 					const $goalPath = createSvgElement('path', {
-						class: 'stock-chart__goal-path',
-						d: path,
-						stroke: color,
+						class: className,
+						d,
 						'stroke-dashoffset': seriesIndex * 3,
+						...(stroke === null ? {} : { stroke }),
 					});
-					goalPaths.set(index, $goalPath);
+					goalPaths.set(index, [...(goalPaths.get(index) ?? []), $goalPath]);
 					$svg.append($goalPath);
-				}
+				});
 			});
 		}
 
@@ -350,8 +406,9 @@ const initStockGoalsChart = () => {
 
 		$svg.append(createSvgElement('path', { class: 'stock-chart__step', d: path, stroke: color }));
 
+		const highest = events.reduce((best, event) => (event.value > best.value ? event : best), events[0]);
+
 		if (mode === 'euro') {
-			const highest = events.reduce((best, event) => (event.value > best.value ? event : best), events[0]);
 			const lowest = events.find((event) => event.value > 0);
 			const extremes = [{ label: 'High', event: highest, above: true }];
 
@@ -375,8 +432,14 @@ const initStockGoalsChart = () => {
 			});
 		}
 
-		const $cursor = createSvgElement('line', { class: 'stock-chart__cursor', y1: CHART_PADDING.top, y2: CHART_HEIGHT - CHART_PADDING.bottom });
+		const $cursor = createSvgElement('line', {
+			class: 'stock-chart__cursor',
+			y1: mode === 'euro' ? CHART_READOUT_BOTTOM : CHART_PADDING.top,
+			y2: CHART_HEIGHT - CHART_PADDING.bottom,
+		});
 		const $marker = createSvgElement('circle', { class: 'stock-chart__marker', r: 5, fill: color });
+		const $readoutDate = createSvgElement('text', { class: 'stock-chart__readout stock-chart__readout--date', y: 14, 'text-anchor': 'middle' });
+		const $readoutAmount = createSvgElement('text', { class: 'stock-chart__readout stock-chart__readout--amount', y: 30, 'text-anchor': 'middle', style: `fill: ${color}` });
 		const $scrub = createSvgElement('rect', {
 			class: 'stock-chart__scrub',
 			x: CHART_PADDING.left,
@@ -384,7 +447,7 @@ const initStockGoalsChart = () => {
 			width: layout.innerWidth,
 			height: layout.innerHeight,
 		});
-		$svg.append($cursor, $marker, $scrub);
+		$svg.append($cursor, $marker, $readoutDate, $readoutAmount, $scrub);
 
 		const firstTime = events[0].time;
 		const lastTime = events[events.length - 1].time;
@@ -416,6 +479,21 @@ const initStockGoalsChart = () => {
 			$marker.setAttribute('cx', x);
 			$marker.setAttribute('cy', y);
 			$svg.classList.add('stock-chart__svg--hovering');
+
+			if (mode === 'euro') {
+				const readoutX = Math.min(Math.max(x, CHART_READOUT_HALF_WIDTH), layout.width - CHART_READOUT_HALF_WIDTH);
+				const amountY = Math.max(yFor(highest.value) - CHART_READOUT_MARKER_GAP, CHART_READOUT_MIN_AMOUNT_Y);
+				$readoutDate.setAttribute('x', readoutX);
+				$readoutDate.setAttribute('y', amountY - CHART_READOUT_LINE_HEIGHT);
+				$readoutAmount.setAttribute('x', readoutX);
+				$readoutAmount.setAttribute('y', amountY);
+				$cursor.setAttribute('y1', amountY + 8);
+				$readoutDate.textContent = formatReadoutDate(hoveredDate);
+				$readoutAmount.textContent = formatMoney(current.invested);
+
+				return;
+			}
+
 			showTooltip({ clientX: rect.left + x, clientY: rect.top + y }, { title: seriesLabel(series), color, lines: tooltipLines });
 		};
 
@@ -424,14 +502,63 @@ const initStockGoalsChart = () => {
 			hideTooltip();
 		};
 
-		$scrub.addEventListener('pointerenter', showAt);
-		$scrub.addEventListener('pointermove', showAt);
+		const showForMouse = (event) => {
+			if (event.pointerType !== 'touch') {
+				showAt(event);
+			}
+		};
+
+		$scrub.addEventListener('pointerenter', showForMouse);
+		$scrub.addEventListener('pointermove', showForMouse);
 		$scrub.addEventListener('click', showAt);
 		$scrub.addEventListener('pointerleave', (event) => {
 			if (event.pointerType === 'mouse') {
 				stopHovering();
 			}
 		});
+
+		let touch = null;
+
+		$svg.addEventListener('pointerdown', (event) => {
+			if (event.pointerType !== 'touch') {
+				return;
+			}
+
+			touch = { startX: event.clientX, startY: event.clientY, lastY: event.clientY, scrolling: false };
+			showAt(event);
+		});
+
+		$svg.addEventListener('pointermove', (event) => {
+			if (event.pointerType !== 'touch' || touch === null) {
+				return;
+			}
+
+			if (!touch.scrolling) {
+				const movedX = Math.abs(event.clientX - touch.startX);
+				const movedY = Math.abs(event.clientY - touch.startY);
+
+				if (movedY > TOUCH_SCROLL_LOCK_PX && movedY > movedX * 2) {
+					touch.scrolling = true;
+					stopHovering();
+				}
+			}
+
+			if (touch.scrolling) {
+				window.scrollBy(0, touch.lastY - event.clientY);
+				touch.lastY = event.clientY;
+
+				return;
+			}
+
+			showAt(event);
+		});
+
+		const endTouch = () => {
+			touch = null;
+		};
+
+		$svg.addEventListener('pointerup', endTouch);
+		$svg.addEventListener('pointercancel', endTouch);
 
 		return $svg;
 	};
@@ -442,6 +569,7 @@ const initStockGoalsChart = () => {
 		hideTooltip();
 		$scroll.replaceChildren(renderers[state.view](getVisibleSeries(), state.mode));
 		$scroll.scrollLeft = $scroll.scrollWidth;
+		$scroll.classList.toggle('stock-chart__scroll--lock-touch', state.view === 'cumulative' && $scroll.scrollWidth <= $scroll.clientWidth + 1);
 	};
 
 	const syncControls = () => {
