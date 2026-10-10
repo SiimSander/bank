@@ -32,7 +32,7 @@ final class UpdateBankEntryTest extends DatabaseTestCase {
 		self::assertTrue(updateBankEntry($this->pdo, $entryId, $accountId, 'investments', 'card', 50.0, 'Wise'));
 
 		self::assertSame(
-			[['note' => 'Wise', 'amount' => 150.0]],
+			[['note' => 'Wise (€WISE)', 'amount' => 150.0]],
 			getInvestmentBreakdownAllTime($this->pdo, $accountId)
 		);
 	}
