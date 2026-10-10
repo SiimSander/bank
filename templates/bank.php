@@ -174,7 +174,7 @@ foreach ($bankTypes as $bankType) {
 						<label for="bank-add-stock">Stock</label>
 						<select id="bank-add-stock" class="js-bank-add-stock">
 							<?php foreach ($investmentNotes as $investmentNote): ?>
-								<option value="<?php echo htmlspecialchars($investmentNote['note']); ?>"><?php echo htmlspecialchars($investmentNote['label']); ?></option>
+								<option value="<?php echo htmlspecialchars($investmentNote['note']); ?>"<?php echo stockOptionAttributes($investmentNote['note'], $stockLogoFor ?? null); ?>><?php echo htmlspecialchars($investmentNote['note']); ?></option>
 							<?php endforeach; ?>
 							<option value="" data-new-stock="1">+ New stock...</option>
 						</select>
@@ -182,8 +182,8 @@ foreach ($bankTypes as $bankType) {
 				<?php endif; ?>
 				<div class="form-field js-bank-add-note-field">
 					<label for="bank-add-note">Note (optional)</label>
-					<input type="text" name="note" id="bank-add-note" maxlength="50" placeholder="Max 50 chars" data-placeholder-default="Max 50 chars" data-placeholder-new-stock="Vanguard S&P 500 (€VUAA)">
-					<p class="form-field__hint js-bank-note-hint" hidden>We recommend this stock note format: Stock name (€TICKER)</p>
+					<input type="text" name="note" id="bank-add-note" maxlength="50" placeholder="Max 50 chars" data-placeholder-default="Max 50 chars" data-placeholder-new-stock="Vanguard S&amp;P 500">
+					<p class="form-field__hint js-bank-note-hint" hidden>Type the stock name. The ticker is added automatically for known stocks; for others, use Stock name (€TICKER).</p>
 				</div>
 				<button class="btn btn-primary js-bank-submit-btn" type="submit">
 					<?php icon('plus'); ?>
@@ -321,7 +321,7 @@ foreach ($bankTypes as $bankType) {
 							<?php if (!empty($editStockNotes)): ?>
 								<select class="js-bank-entry-stock" hidden>
 									<?php foreach ($editStockNotes as $stockNote): ?>
-										<option value="<?php echo htmlspecialchars($stockNote['note']); ?>"<?php echo ($selectEntryStock && $stockNote['note'] === $entryNote) ? ' selected' : ''; ?>><?php echo htmlspecialchars($stockNote['label']); ?></option>
+										<option value="<?php echo htmlspecialchars($stockNote['note']); ?>"<?php echo stockOptionAttributes($stockNote['note'], $stockLogoFor ?? null); ?><?php echo ($selectEntryStock && $stockNote['note'] === $entryNote) ? ' selected' : ''; ?>><?php echo htmlspecialchars($stockNote['note']); ?></option>
 									<?php endforeach; ?>
 									<option value="" data-new-stock="1"<?php echo $selectEntryStock ? '' : ' selected'; ?>>+ New stock...</option>
 								</select>
