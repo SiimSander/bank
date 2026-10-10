@@ -21,9 +21,10 @@ $colorButton = static function (array $row) use ($escape, $tickerLabel): string 
 		. ' data-note="' . $escape($row['note']) . '"'
 		. ' data-name="' . $escape($row['name']) . '"'
 		. ' data-color="' . $escape($color) . '"'
+		. ' data-logo="' . $escape($row['logo_slug'] ?? 'none') . '"'
 		. ' style="--stock-color: ' . $escape($color) . '"'
-		. ' aria-label="Change colour for ' . $escape($row['name']) . '"'
-		. ' title="Change colour">'
+		. ' aria-label="Change colour and logo for ' . $escape($row['name']) . '"'
+		. ' title="Change colour and logo">'
 		. ($label !== '' ? $escape($label) : '<span class="stock-chip__swatch"></span>')
 		. '</button>';
 };
@@ -146,6 +147,7 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 								data-name="<?php echo $escape($sector['name']); ?>"
 								data-ticker="<?php echo $escape($sector['ticker'] !== '' ? $tickerLabel($sector['ticker']) : ''); ?>"
 								data-color="<?php echo $escape($sector['color']); ?>"
+								data-logo="<?php echo $escape($sector['logo'] ?? ''); ?>"
 								data-invested="<?php echo $escape($sector['invested']); ?>"
 								data-goal="<?php echo $escape($sector['goal']); ?>"
 								data-percent="<?php echo $escape($sector['percent']); ?>"
@@ -215,7 +217,7 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 					<article class="stock-card stock-card--<?php echo $escape($row['status']); ?>" style="--stock-color: <?php echo $escape($row['color']); ?>">
 						<header class="stock-card__header">
 							<div class="stock-card__title">
-								<h2 class="stock-card__name"><?php echo $escape($row['name']); ?></h2>
+								<h2 class="stock-card__name"><?php echo stockLogoImage($row['logo']); ?><span><?php echo $escape($row['name']); ?></span></h2>
 								<?php echo $colorButton($row); ?>
 							</div>
 							<?php if ($isCurrentStockMonth): ?>
@@ -311,7 +313,7 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 					<article class="stock-card stock-card--none">
 						<header class="stock-card__header">
 							<div class="stock-card__title">
-								<h2 class="stock-card__name"><?php echo $escape($row['name']); ?></h2>
+								<h2 class="stock-card__name"><?php echo stockLogoImage($row['logo']); ?><span><?php echo $escape($row['name']); ?></span></h2>
 								<?php echo $colorButton($row); ?>
 							</div>
 						</header>
@@ -338,6 +340,17 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 				<p class="stock-empty__text">Record an investment with a note, or use "Add stock" to plan one before you invest.</p>
 			</section>
 		<?php endif; ?>
+
+		<section class="stock-chart-card stock-portfolio" aria-label="Portfolio">
+			<h2 class="stock-chart-card__title">Portfolio</h2>
+			<?php if ($stockPortfolio['items'] === []): ?>
+				<p class="stock-empty__text">Invest in a stock to see how your portfolio is split.</p>
+			<?php else: ?>
+				<p class="stock-chart-card__hint">Each tile is the share of everything you have invested so far that went into that stock.</p>
+				<div class="stock-portfolio__map js-stock-portfolio" role="img" aria-label="Share of each stock in your portfolio"
+					data-portfolio="<?php echo $escape(json_encode($stockPortfolio['items'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)); ?>"></div>
+			<?php endif; ?>
+		</section>
 
 		<section class="stock-chart-card" aria-label="Goal progress over time">
 			<h2 class="stock-chart-card__title">Progress over time</h2>
@@ -369,7 +382,7 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 			<div class="modal__header">
 				<div>
 					<h2 class="modal__title" id="stock-color-modal-title">Stock colour</h2>
-					<p class="modal__subtitle">Used on the card and in the progress chart.</p>
+					<p class="modal__subtitle">The colour is used on the card and in the charts<?php echo $stockLogoOptions !== [] ? '; the logo shows next to the stock name' : ''; ?>.</p>
 				</div>
 				<button type="button" class="modal__close js-stock-color-close" aria-label="Close">&times;</button>
 			</div>
@@ -385,9 +398,10 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 						<input type="color" class="js-stock-color-custom" aria-label="Custom colour">
 					</label>
 				</div>
+				<?php include __DIR__ . '/partials/stock-logo-picker.php'; ?>
 				<p class="stock-goal-form__error js-stock-color-error" role="alert" hidden></p>
 				<div class="stock-goal-form__actions">
-					<button type="submit" class="btn btn-primary js-stock-color-save">Save colour</button>
+					<button type="submit" class="btn btn-primary js-stock-color-save">Save</button>
 				</div>
 			</form>
 		</div>
@@ -414,8 +428,12 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 					<label for="stock-goal-amount">Monthly goal (€)</label>
 					<input type="number" id="stock-goal-amount" class="js-stock-goal-amount" min="0" max="1000000" step="0.01" inputmode="decimal" placeholder="800">
 				</div>
+				<div class="js-stock-goal-logo-field" hidden>
+					<?php include __DIR__ . '/partials/stock-logo-picker.php'; ?>
+				</div>
 				<p class="stock-goal-form__error js-stock-goal-error" role="alert" hidden></p>
 				<div class="stock-goal-form__actions">
+					<button type="button" class="btn btn-secondary js-stock-goal-delete" hidden>Delete stock</button>
 					<button type="button" class="btn btn-danger js-stock-goal-remove" hidden>Remove goal</button>
 					<button type="submit" class="btn btn-primary js-stock-goal-save">Save goal</button>
 				</div>
