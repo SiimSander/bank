@@ -317,6 +317,7 @@ document.querySelectorAll('.js-bank-entry-edit-form').forEach(($editForm) => {
 		$typeSelect?.addEventListener('change', syncEditStockField);
 		$editForm.addEventListener('entry-edit-reset', () => {
 			$stockSelect.selectedIndex = [...$stockSelect.options].findIndex((option) => option.defaultSelected);
+			$stockSelect.dispatchEvent(new Event('stock-select-sync'));
 			$noteInput.value = $noteInput.dataset.originalNote ?? '';
 			syncEditStockField();
 		});
