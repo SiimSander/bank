@@ -14,12 +14,12 @@ final class InvestmentNotesTest extends DatabaseTestCase {
 		$this->addEntry($accountId, 'investments', 100, '2026-01-05', note: 'Wise (£WISE)');
 		$this->addEntry($accountId, 'investments', 300, '2026-01-10', note: 'Vanguard S&P 500 (€VUAA)');
 		$this->addEntry($accountId, 'investments', 50, '2026-02-10', note: 'Wise (£WISE)');
-		$this->addEntry($accountId, 'investments', 20, '2026-02-15', note: 'Bitcoin');
+		$this->addEntry($accountId, 'investments', 20, '2026-02-15', note: 'Gold');
 
 		self::assertSame([
 			['note' => 'Vanguard S&P 500 (€VUAA)', 'label' => '€VUAA'],
 			['note' => 'Wise (£WISE)', 'label' => '£WISE'],
-			['note' => 'Bitcoin', 'label' => 'Bitcoin'],
+			['note' => 'Gold', 'label' => 'Gold'],
 		], getInvestmentNotes($this->pdo, $accountId));
 	}
 
