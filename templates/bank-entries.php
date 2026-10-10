@@ -158,6 +158,7 @@ foreach ($entries as $entry) {
 									</div>
 									<?php include __DIR__ . '/partials/bank-history-entry-edit-form.php'; ?>
 									<span class="entry-card__actions">
+										<?php echo stockLogoImage($stockLogoFor((string) ($entry['note'] ?? ''))['url'] ?? null, 'stock-logo--action'); ?>
 										<button type="button" class="btn-edit js-bank-edit-btn" title="Edit">
 											<?php icon('pencil', 'btn-edit__icon'); ?>
 										</button>
