@@ -28,7 +28,16 @@ if (str_starts_with($uri, '/assets/')) {
 		$contentTypes = [
 			'css' => 'text/css; charset=utf-8',
 			'js' => 'application/javascript; charset=utf-8',
+			'svg' => 'image/svg+xml',
+			'png' => 'image/png',
+			'webp' => 'image/webp',
+			'jpg' => 'image/jpeg',
 		];
+
+		if (in_array($extension, ['svg', 'png', 'webp', 'jpg'], true)) {
+			header('Cache-Control: public, max-age=31536000, immutable');
+			header('X-Content-Type-Options: nosniff');
+		}
 
 		header('Content-Type: ' . ($contentTypes[$extension] ?? 'application/octet-stream'));
 		readfile($assetPath);
@@ -50,6 +59,7 @@ require_once __DIR__ . '/../src/habits.php';
 require_once __DIR__ . '/../src/habitChart.php';
 require_once __DIR__ . '/../src/bank.php';
 require_once __DIR__ . '/../src/stockGoals.php';
+require_once __DIR__ . '/../src/stockLogos.php';
 require_once __DIR__ . '/../src/enableBanking.php';
 require_once __DIR__ . '/../src/lhvSync.php';
 require_once __DIR__ . '/../src/plans.php';
@@ -290,6 +300,8 @@ switch ($uri) {
 		$stockGoalRows = getStockGoalRows($pdo, $accountId, $selectedMonth);
 		$stockGoalSummary = summarizeStockGoalRows($stockGoalRows);
 		$stockGoalChart = getStockGoalChartSeries($pdo, $accountId);
+		$stockPortfolio = getStockPortfolio($pdo, $accountId);
+		$stockLogoOptions = array_values(getStockLogoCatalog());
 
 		$pageTitle = 'Stock Goals';
 		ob_start();
@@ -312,8 +324,60 @@ switch ($uri) {
 			(int) $_SESSION['user_id'],
 			(string) ($_POST['note'] ?? ''),
 			parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0,
-			($_POST['new_stock'] ?? '') === '1'
+			($_POST['new_stock'] ?? '') === '1',
+			(string) ($_POST['logo'] ?? '') !== '' ? (string) $_POST['logo'] : null
 		);
+
+		if ($result === true && ($_POST['logo'] ?? '') !== '') {
+			$result = setStockLogo(db(), (int) $_SESSION['user_id'], (string) ($_POST['note'] ?? ''), (string) $_POST['logo']);
+		}
+
+		if ($result !== true) {
+			http_response_code(422);
+			echo json_encode(['success' => false, 'error' => $result]);
+			exit;
+		}
+
+		echo json_encode(['success' => true]);
+		exit;
+	case '/stock-goals/logo':
+		header('Content-Type: application/json');
+
+		if (!isset($_SESSION['user_id'])) {
+			http_response_code(401);
+			echo json_encode(['success' => false]);
+			exit;
+		}
+
+		requireCsrfToken(true);
+
+		$result = setStockLogo(
+			db(),
+			(int) $_SESSION['user_id'],
+			(string) ($_POST['note'] ?? ''),
+			(string) ($_POST['logo'] ?? '')
+		);
+
+		if ($result !== true) {
+			http_response_code(422);
+			echo json_encode(['success' => false, 'error' => $result]);
+			exit;
+		}
+
+		echo json_encode(['success' => true]);
+		exit;
+	case '/stock-goals/delete':
+		header('Content-Type: application/json');
+
+		if (!isset($_SESSION['user_id'])) {
+			http_response_code(401);
+			echo json_encode(['success' => false]);
+			exit;
+		}
+
+		requireCsrfToken(true);
+
+		$result = deleteStock(db(), (int) $_SESSION['user_id'], (string) ($_POST['note'] ?? ''));
 
 		if ($result !== true) {
 			http_response_code(422);
@@ -577,6 +641,7 @@ switch ($uri) {
 		BankRequestCache::enable();
 
 		$todayEntries = getTodayBankEntries($pdo, $_SESSION['user_id']);
+		$stockLogoFor = stockLogoResolver($pdo, (int) $_SESSION['user_id']);
 		$balance = getBankBalance($pdo, $_SESSION['user_id']);
 		$cashBalance = getCashBalance($pdo, $_SESSION['user_id']);
 		$bankTypes = getActiveBankTypes($pdo, $_SESSION['user_id']);
@@ -630,6 +695,7 @@ switch ($uri) {
 		}
 		$netWorthHistory = getNetWorthHistory($pdo, $_SESSION['user_id']);
 		$accountId = (int) $_SESSION['user_id'];
+		$stockLogoFor = stockLogoResolver($pdo, $accountId);
 		ob_start();
 		include __DIR__ . '/../templates/bank-history.php';
 		$content = ob_get_clean();
@@ -1155,6 +1221,9 @@ switch ($uri) {
 			$investmentsNoteBreakdown = $type === 'investments'
 				? getInvestmentBreakdownByNote($pdo, $_SESSION['user_id'], $dateRange['start'], $dateRange['end'])
 				: [];
+			$stockLogoFor = $type === 'investments'
+				? stockLogoResolver($pdo, (int) $_SESSION['user_id'])
+				: static fn(string $note): ?array => null;
 			$investmentNotes = $type === 'investments'
 				? getInvestmentNotes($pdo, $_SESSION['user_id'])
 				: [];
