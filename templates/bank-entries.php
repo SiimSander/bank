@@ -69,7 +69,7 @@ foreach ($entries as $entry) {
 								<label for="entry-stock">Stock</label>
 								<select id="entry-stock" class="js-bank-type-stock">
 									<?php foreach ($investmentNotes as $investmentNote): ?>
-										<option value="<?php echo htmlspecialchars($investmentNote['note']); ?>"><?php echo htmlspecialchars($investmentNote['label']); ?></option>
+										<option value="<?php echo htmlspecialchars($investmentNote['note']); ?>"<?php echo stockOptionAttributes($investmentNote['note'], $stockLogoFor ?? null); ?>><?php echo htmlspecialchars($investmentNote['note']); ?></option>
 									<?php endforeach; ?>
 									<option value="" data-new-stock="1">+ New stock...</option>
 								</select>
@@ -77,9 +77,9 @@ foreach ($entries as $entry) {
 						<?php endif; ?>
 						<div class="form-field js-bank-type-note-field">
 							<label for="entry-note">Note (optional)</label>
-							<input type="text" name="note" id="entry-note" maxlength="150" placeholder="Max 150 chars" data-placeholder-default="Max 150 chars" data-placeholder-new-stock="Type the new stock name or ticker">
+							<input type="text" name="note" id="entry-note" maxlength="150" placeholder="Max 150 chars" data-placeholder-default="Max 150 chars" data-placeholder-new-stock="Vanguard S&amp;P 500">
 							<?php if ($type === 'investments'): ?>
-								<p class="form-field__hint">We recommend this stock note format: Stock name (€TICKER)</p>
+								<p class="form-field__hint">Type the stock name. The ticker is added automatically for known stocks; for others, use Stock name (€TICKER).</p>
 							<?php endif; ?>
 						</div>
 						<button class="btn btn-primary js-bank-submit-btn" type="submit">
