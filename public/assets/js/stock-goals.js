@@ -22,6 +22,16 @@ const createSvgElement = (tag, attributes = {}) => {
 	return element;
 };
 
+const createStockLogo = (url) => {
+	const $logo = document.createElement('img');
+	$logo.className = 'stock-logo';
+	$logo.src = url;
+	$logo.alt = '';
+	$logo.decoding = 'async';
+
+	return $logo;
+};
+
 const formatBarLabel = (point) => {
 	const invested = Math.round(point.invested);
 
@@ -29,6 +39,10 @@ const formatBarLabel = (point) => {
 };
 
 const TOUCH_SCROLL_LOCK_PX = 28;
+const CHART_BAR_LOGO_MAX = 20;
+const CHART_BAR_LOGO_MIN = 10;
+const CHART_BAR_LOGO_INSET = 2;
+let barLogoCount = 0;
 const CHART_READOUT_BOTTOM = 38;
 const CHART_READOUT_LINE_HEIGHT = 16;
 const CHART_READOUT_MARKER_GAP = 14;
@@ -113,13 +127,20 @@ const initStockGoalsChart = () => {
 	$scroll.className = 'stock-chart__scroll';
 	$chart.append($scroll, $tooltip);
 
-	const showTooltip = (event, { title, color, lines }) => {
+	const showTooltip = (event, { title, color, lines, logo = null }) => {
 		const rect = $chart.getBoundingClientRect();
 		$tooltip.replaceChildren();
 
 		const $title = document.createElement('strong');
-		$title.textContent = title;
 		$title.style.color = color;
+
+		if (logo) {
+			$title.append(createStockLogo(logo));
+		}
+
+		const $titleText = document.createElement('span');
+		$titleText.textContent = title;
+		$title.append($titleText);
 		$tooltip.append($title);
 
 		lines.forEach((line) => {
@@ -273,7 +294,7 @@ const initStockGoalsChart = () => {
 					rx: 3,
 					fill: color,
 				});
-				bindTooltip($bar, { title: seriesLabel(series), color, lines: summaryLines(point) });
+				bindTooltip($bar, { title: seriesLabel(series), color, lines: summaryLines(point), logo: series.logo });
 
 				if (mode === 'euro') {
 					$bar.addEventListener('pointerenter', (event) => {
@@ -290,6 +311,28 @@ const initStockGoalsChart = () => {
 				}
 
 				$svg.append($bar);
+
+				const logoSize = Math.min(barWidth - CHART_BAR_LOGO_INSET * 2, CHART_BAR_LOGO_MAX);
+				const barHeight = yFor(0) - yFor(value);
+
+				if (series.logo && logoSize >= CHART_BAR_LOGO_MIN && barHeight >= logoSize + CHART_BAR_LOGO_INSET * 2) {
+					barLogoCount += 1;
+					const clipId = `stock-bar-logo-${barLogoCount}`;
+					const logoX = x + (barWidth - logoSize) / 2;
+					const logoY = yFor(value) + CHART_BAR_LOGO_INSET;
+					const $clip = createSvgElement('clipPath', { id: clipId });
+					$clip.append(createSvgElement('rect', { x: logoX, y: logoY, width: logoSize, height: logoSize, rx: 3 }));
+					$svg.append($clip, createSvgElement('image', {
+						class: 'stock-chart__bar-logo',
+						href: series.logo,
+						x: logoX,
+						y: logoY,
+						width: logoSize,
+						height: logoSize,
+						'clip-path': `url(#${clipId})`,
+						preserveAspectRatio: 'xMidYMid meet',
+					}));
+				}
 
 				const labelX = x + barWidth / 2;
 				const $label = createSvgElement('text', {
@@ -519,7 +562,7 @@ const initStockGoalsChart = () => {
 				return;
 			}
 
-			showTooltip({ clientX: rect.left + x, clientY: rect.top + y }, { title: seriesLabel(series), color, lines: tooltipLines });
+			showTooltip({ clientX: rect.left + x, clientY: rect.top + y }, { title: seriesLabel(series), color, lines: tooltipLines, logo: series.logo });
 		};
 
 		const stopHovering = () => {
@@ -670,6 +713,299 @@ const initStockGoalsChart = () => {
 	draw();
 };
 
+const stockLogoSlugForNote = (note) => {
+	const match = note.match(/^(.*?)\s*\(([^()]+)\)\s*$/u);
+
+	if (match === null || match[1].trim() === '') {
+		return '';
+	}
+
+	return match[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+};
+
+const initStockLogoPicker = ($root) => {
+	if (!$root) {
+		return null;
+	}
+
+	const $tiles = [...$root.querySelectorAll('.js-stock-logo-tile')];
+	const $hint = $root.querySelector('.js-stock-logo-hint');
+	const slugs = JSON.parse($root.dataset.slugs ?? '[]');
+	const aliases = JSON.parse($root.dataset.aliases ?? '{}');
+	let selected = 'none';
+	let touched = false;
+
+	const paint = () => {
+		$tiles.forEach(($tile) => {
+			const isSelected = $tile.dataset.logo === selected;
+			$tile.classList.toggle('stock-logo-picker__tile--selected', isSelected);
+			$tile.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+		});
+	};
+
+	const showHint = (text) => {
+		$hint.textContent = text;
+		$hint.hidden = text === '';
+	};
+
+	$tiles.forEach(($tile) => {
+		$tile.addEventListener('click', () => {
+			selected = $tile.dataset.logo;
+			touched = true;
+			showHint('');
+			paint();
+		});
+	});
+
+	return {
+		get value() {
+			return selected;
+		},
+		get touched() {
+			return touched;
+		},
+		select(slug) {
+			selected = slugs.includes(slug) ? slug : 'none';
+			touched = false;
+			showHint('');
+			paint();
+		},
+		reset() {
+			this.select('none');
+		},
+		suggest(note) {
+			if (touched) {
+				return;
+			}
+
+			const tickerSlug = stockLogoSlugForNote(note);
+			const slug = slugs.includes(tickerSlug) ? tickerSlug : (aliases[tickerSlug] ?? '');
+			const matches = slugs.includes(slug);
+
+			selected = matches ? slug : 'none';
+			showHint(matches ? `Suggested logo for ${note.match(/\(([^()]+)\)\s*$/u)[1]}` : '');
+			paint();
+		},
+	};
+};
+
+const squarify = (items, width, height) => {
+	const total = items.reduce((sum, item) => sum + item.invested, 0);
+	const scale = (width * height) / total;
+	const nodes = items.map((item) => ({ item, area: item.invested * scale }));
+	const rects = [];
+	let free = { x: 0, y: 0, w: width, h: height };
+	let row = [];
+
+	const sumOf = (candidate) => candidate.reduce((sum, node) => sum + node.area, 0);
+
+	const worstRatio = (candidate, side) => {
+		const sum = sumOf(candidate);
+		const largest = Math.max(...candidate.map((node) => node.area));
+		const smallest = Math.min(...candidate.map((node) => node.area));
+
+		return Math.max((side * side * largest) / (sum * sum), (sum * sum) / (side * side * smallest));
+	};
+
+	const placeRow = () => {
+		const sum = sumOf(row);
+
+		if (free.w >= free.h) {
+			const columnWidth = sum / free.h;
+			let y = free.y;
+
+			row.forEach((node) => {
+				const h = node.area / columnWidth;
+				rects.push({ item: node.item, x: free.x, y, w: columnWidth, h });
+				y += h;
+			});
+
+			free = { x: free.x + columnWidth, y: free.y, w: free.w - columnWidth, h: free.h };
+		} else {
+			const rowHeight = sum / free.w;
+			let x = free.x;
+
+			row.forEach((node) => {
+				const w = node.area / rowHeight;
+				rects.push({ item: node.item, x, y: free.y, w, h: rowHeight });
+				x += w;
+			});
+
+			free = { x: free.x, y: free.y + rowHeight, w: free.w, h: free.h - rowHeight };
+		}
+
+		row = [];
+	};
+
+	let index = 0;
+	while (index < nodes.length) {
+		const side = Math.min(free.w, free.h);
+		const candidate = [...row, nodes[index]];
+
+		if (row.length === 0 || worstRatio(candidate, side) <= worstRatio(row, side)) {
+			row = candidate;
+			index += 1;
+		} else {
+			placeRow();
+		}
+	}
+
+	if (row.length > 0) {
+		placeRow();
+	}
+
+	return rects;
+};
+
+const PORTFOLIO_PHONE_WIDTH = 560;
+
+const initStockPortfolio = () => {
+	const $map = document.querySelector('.js-stock-portfolio');
+
+	if (!$map) {
+		return;
+	}
+
+	const items = JSON.parse($map.dataset.portfolio);
+	const $tooltip = document.createElement('div');
+	$tooltip.className = 'stock-portfolio__tooltip';
+	$tooltip.hidden = true;
+	let activeTile = null;
+	let renderedWidth = 0;
+
+	const formatShare = (share) => `${share < 0.01 ? '<0.01' : Number(share).toLocaleString('en-US', { maximumFractionDigits: 2 })}%`;
+	const labelOf = (item) => (item.ticker !== '' ? tickerLabel(item.ticker) : item.name);
+
+	const hide = () => {
+		activeTile?.classList.remove('stock-portfolio__tile--active');
+		activeTile = null;
+		$tooltip.hidden = true;
+	};
+
+	const show = ($tile, item, x, y) => {
+		activeTile?.classList.remove('stock-portfolio__tile--active');
+		activeTile = $tile;
+		$tile.classList.add('stock-portfolio__tile--active');
+
+		const $title = document.createElement('strong');
+		$title.style.color = item.color ?? '';
+
+		if (item.logo) {
+			$title.append(createStockLogo(item.logo));
+		}
+
+		const $titleText = document.createElement('span');
+		$titleText.textContent = item.ticker !== '' ? `${item.name} · ${item.ticker}` : item.name;
+		$title.append($titleText);
+
+		const $invested = document.createElement('span');
+		$invested.textContent = `${formatMoney(item.invested)} invested`;
+		const $share = document.createElement('span');
+		$share.textContent = `${formatShare(item.share)} of your portfolio`;
+		$tooltip.replaceChildren($title, $invested, $share);
+		$tooltip.hidden = false;
+
+		const rect = $map.getBoundingClientRect();
+		const left = Math.min(Math.max(x - rect.left - $tooltip.offsetWidth / 2, 0), Math.max(rect.width - $tooltip.offsetWidth, 0));
+		const above = y - rect.top - $tooltip.offsetHeight - 12;
+		$tooltip.style.left = `${left}px`;
+		$tooltip.style.top = `${above >= 0 ? above : y - rect.top + 16}px`;
+	};
+
+	const buildTile = ({ item, x, y, w, h }) => {
+		const $tile = document.createElement('div');
+		$tile.className = 'stock-portfolio__tile';
+		$tile.tabIndex = 0;
+		$tile.style.cssText = `left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;`;
+		$tile.style.setProperty('--tile-color', item.color ?? '#a78bfa');
+		$tile.setAttribute('aria-label', `${labelOf(item)}: ${formatShare(item.share)}`);
+
+		const logoSize = Math.round(Math.min(Math.max(Math.min(w, h) * 0.34, 18), 48));
+		const showPercent = w >= 36 && h >= 22;
+		const showLabel = w >= 44 && h >= 38;
+		const showLogo = Boolean(item.logo) && showLabel && showPercent && w >= logoSize + 8 && h >= logoSize + 44;
+
+		if (showLogo) {
+			const $logo = createStockLogo(item.logo);
+			$logo.style.width = `${logoSize}px`;
+			$logo.style.height = `${logoSize}px`;
+			$tile.append($logo);
+		}
+
+		if (showLabel) {
+			const $label = document.createElement('span');
+			$label.className = 'stock-portfolio__ticker';
+			$label.textContent = labelOf(item);
+			$tile.append($label);
+		}
+
+		if (showPercent) {
+			const $percent = document.createElement('span');
+			$percent.className = 'stock-portfolio__percent';
+			$percent.textContent = formatShare(item.share);
+			$tile.append($percent);
+		}
+
+		$tile.addEventListener('pointerenter', (event) => {
+			if (event.pointerType === 'mouse') {
+				show($tile, item, event.clientX, event.clientY);
+			}
+		});
+		$tile.addEventListener('pointermove', (event) => {
+			if (event.pointerType === 'mouse') {
+				show($tile, item, event.clientX, event.clientY);
+			}
+		});
+		$tile.addEventListener('pointerleave', (event) => {
+			if (event.pointerType === 'mouse') {
+				hide();
+			}
+		});
+		$tile.addEventListener('click', (event) => {
+			if (activeTile === $tile && event.pointerType !== 'mouse') {
+				hide();
+
+				return;
+			}
+
+			show($tile, item, event.clientX, event.clientY);
+		});
+		$tile.addEventListener('focus', () => {
+			if ($tile.matches(':focus-visible')) {
+				const rect = $tile.getBoundingClientRect();
+				show($tile, item, rect.left + rect.width / 2, rect.top + rect.height / 2);
+			}
+		});
+		$tile.addEventListener('blur', hide);
+
+		return $tile;
+	};
+
+	const render = () => {
+		const width = $map.clientWidth;
+		const height = width < PORTFOLIO_PHONE_WIDTH ? Math.round(width * 1.15) : Math.min(Math.max(Math.round(width * 0.5), 280), 440);
+
+		renderedWidth = width;
+		$map.style.height = `${height}px`;
+		hide();
+		$map.replaceChildren(...squarify(items, width, height).map(buildTile), $tooltip);
+	};
+
+	document.addEventListener('click', (event) => {
+		if (!event.target.closest('.stock-portfolio__tile')) {
+			hide();
+		}
+	});
+
+	render();
+
+	new ResizeObserver(() => {
+		if ($map.clientWidth !== renderedWidth) {
+			render();
+		}
+	}).observe($map);
+};
+
 const initStockGoalModal = () => {
 	const $modal = document.querySelector('.js-stock-goal-modal');
 
@@ -683,11 +1019,15 @@ const initStockGoalModal = () => {
 	const $amount = $modal.querySelector('.js-stock-goal-amount');
 	const $error = $modal.querySelector('.js-stock-goal-error');
 	const $remove = $modal.querySelector('.js-stock-goal-remove');
+	const $delete = $modal.querySelector('.js-stock-goal-delete');
 	const $save = $modal.querySelector('.js-stock-goal-save');
 	const $nameField = $modal.querySelector('.js-stock-goal-name-field');
 	const $name = $modal.querySelector('.js-stock-goal-name');
+	const $logoField = $modal.querySelector('.js-stock-goal-logo-field');
+	const logoPicker = initStockLogoPicker($modal.querySelector('.js-stock-logo-picker'));
 
 	let editedNote = null;
+	let editedName = '';
 	let isAddingStock = false;
 
 	const showError = (message) => {
@@ -715,6 +1055,9 @@ const initStockGoalModal = () => {
 		$name.value = '';
 		$amount.value = '';
 		$remove.hidden = true;
+		$delete.hidden = true;
+		$logoField.hidden = false;
+		logoPicker?.reset();
 		open();
 		$name.focus();
 	};
@@ -722,7 +1065,10 @@ const initStockGoalModal = () => {
 	const openForEdit = ({ note, name, goal }) => {
 		isAddingStock = false;
 		$nameField.hidden = true;
+		$logoField.hidden = true;
 		editedNote = note;
+		editedName = name;
+		$delete.hidden = false;
 		$title.textContent = Number(goal) > 0 ? `Edit goal: ${name}` : `Set goal: ${name}`;
 		$subtitle.textContent = 'Applies from this month on. Past months keep their old goal.';
 		$amount.value = Number(goal) > 0 ? goal : '';
@@ -739,7 +1085,7 @@ const initStockGoalModal = () => {
 			const response = await fetch('/stock-goals/save', {
 				method: 'POST',
 				headers: window.csrfHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-				body: `note=${encodeURIComponent(note)}&amount=${encodeURIComponent(amount)}${isAddingStock ? '&new_stock=1' : ''}`,
+				body: `note=${encodeURIComponent(note)}&amount=${encodeURIComponent(amount)}${isAddingStock ? '&new_stock=1' : ''}${isAddingStock && logoPicker?.touched ? `&logo=${encodeURIComponent(logoPicker.value)}` : ''}`,
 			});
 			const result = await response.json().catch(() => ({}));
 
@@ -790,6 +1136,42 @@ const initStockGoalModal = () => {
 		submit(0, editedNote);
 	});
 
+	$delete.addEventListener('click', async () => {
+		if (!window.confirm(`Delete "${editedName}"? Its goals, colour and logo are removed.`)) {
+			return;
+		}
+
+		showError('');
+		$save.disabled = true;
+		$remove.disabled = true;
+		$delete.disabled = true;
+
+		try {
+			const response = await fetch('/stock-goals/delete', {
+				method: 'POST',
+				headers: window.csrfHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+				body: `note=${encodeURIComponent(editedNote)}`,
+			});
+			const result = await response.json().catch(() => ({}));
+
+			if (response.ok && result.success) {
+				window.location.reload();
+
+				return;
+			}
+
+			showError(result.error ?? 'Could not delete the stock. Please try again.');
+		} catch {
+			showError('Could not delete the stock. Please try again.');
+		}
+
+		$save.disabled = false;
+		$remove.disabled = false;
+		$delete.disabled = false;
+	});
+
+	$name.addEventListener('input', () => logoPicker?.suggest($name.value));
+
 	$modal.querySelector('.js-stock-goal-close').addEventListener('click', close);
 	$modal.addEventListener('click', (event) => {
 		if (event.target === $modal) {
@@ -816,10 +1198,17 @@ const initStockRing = () => {
 
 	const formatPercent = (value) => `${Number(value).toLocaleString('en-US', { maximumFractionDigits: 1 })}%`;
 
-	const fillTooltip = ({ name, ticker, color, invested, goal, percent, contribution, overall }) => {
+	const fillTooltip = ({ name, ticker, color, logo, invested, goal, percent, contribution, overall }) => {
 		const $title = document.createElement('strong');
-		$title.textContent = ticker !== '' ? `${name} · ${ticker}` : name;
 		$title.style.color = color;
+
+		if (logo) {
+			$title.append(createStockLogo(logo));
+		}
+
+		const $titleText = document.createElement('span');
+		$titleText.textContent = ticker !== '' ? `${name} · ${ticker}` : name;
+		$title.append($titleText);
 
 		const $amounts = document.createElement('span');
 		$amounts.className = 'stock-ring__tooltip-amounts';
@@ -1021,12 +1410,25 @@ const initStockColorModal = () => {
 	const $error = $modal.querySelector('.js-stock-color-error');
 	const $save = $modal.querySelector('.js-stock-color-save');
 
+	const logoPicker = initStockLogoPicker($modal.querySelector('.js-stock-logo-picker'));
 	let editedNote = null;
 	let selectedColor = null;
+	let initialLogo = 'none';
 
 	const showError = (message) => {
 		$error.textContent = message;
 		$error.hidden = message === '';
+	};
+
+	const post = async (url, body) => {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: window.csrfHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+			body,
+		});
+		const result = await response.json().catch(() => ({}));
+
+		return response.ok && result.success ? null : (result.error ?? 'Could not save. Please try again.');
 	};
 
 	const select = (color) => {
@@ -1049,10 +1451,12 @@ const initStockColorModal = () => {
 		document.body.classList.remove('modal-open');
 	};
 
-	const openForEdit = ({ note, name, color }) => {
+	const openForEdit = ({ note, name, color, logo }) => {
 		editedNote = note;
-		$title.textContent = `Colour: ${name}`;
+		$title.textContent = logoPicker ? `Colour and logo: ${name}` : `Colour: ${name}`;
 		select(color);
+		initialLogo = logo ?? 'none';
+		logoPicker?.select(initialLogo);
 		showError('');
 		$modal.classList.add('modal-overlay--open');
 		document.body.classList.add('modal-open');
@@ -1073,22 +1477,21 @@ const initStockColorModal = () => {
 		$save.disabled = true;
 
 		try {
-			const response = await fetch('/stock-goals/color', {
-				method: 'POST',
-				headers: window.csrfHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-				body: `note=${encodeURIComponent(editedNote)}&color=${encodeURIComponent(selectedColor)}`,
-			});
-			const result = await response.json().catch(() => ({}));
+			let failure = await post('/stock-goals/color', `note=${encodeURIComponent(editedNote)}&color=${encodeURIComponent(selectedColor)}`);
 
-			if (response.ok && result.success) {
+			if (failure === null && logoPicker && logoPicker.value !== initialLogo) {
+				failure = await post('/stock-goals/logo', `note=${encodeURIComponent(editedNote)}&logo=${encodeURIComponent(logoPicker.value)}`);
+			}
+
+			if (failure === null) {
 				window.location.reload();
 
 				return;
 			}
 
-			showError(result.error ?? 'Could not save the colour. Please try again.');
+			showError(failure);
 		} catch {
-			showError('Could not save the colour. Please try again.');
+			showError('Could not save. Please try again.');
 		}
 
 		$save.disabled = false;
@@ -1168,6 +1571,7 @@ const initStockMonthSwitcher = () => {
 
 initStockMonthSwitcher();
 initStockGoalsChart();
+initStockPortfolio();
 initStockGoalModal();
 initStockColorModal();
 initStockRing();
