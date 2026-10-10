@@ -144,10 +144,19 @@ const initStockGoalsChart = () => {
 
 	const bindTooltip = ($element, content) => {
 		const show = (event) => showTooltip(event, content);
-		$element.addEventListener('pointerenter', show);
-		$element.addEventListener('pointermove', show);
+		const showForMouse = (event) => {
+			if (event.pointerType !== 'touch') {
+				show(event);
+			}
+		};
+		$element.addEventListener('pointerenter', showForMouse);
+		$element.addEventListener('pointermove', showForMouse);
 		$element.addEventListener('click', show);
-		$element.addEventListener('pointerleave', hideTooltip);
+		$element.addEventListener('pointerleave', (event) => {
+			if (event.pointerType !== 'touch') {
+				hideTooltip();
+			}
+		});
 	};
 
 	const summaryLines = (point) => [
@@ -234,6 +243,13 @@ const initStockGoalsChart = () => {
 			goalPaths.forEach(($paths, key) => $paths.forEach(($path) => $path.classList.toggle('stock-chart__goal-path--active', key === seriesKey)));
 		};
 
+		$svg.addEventListener('click', (event) => {
+			if (event.target.closest('.stock-chart__bar') === null) {
+				hideTooltip();
+				focusGoalLine(null);
+			}
+		});
+
 		months.forEach((month, monthIndex) => {
 			addMonthLabel($svg, month, monthIndex, CHART_PADDING.left + layout.band * (monthIndex + 0.5), CHART_HEIGHT - 10);
 
@@ -260,8 +276,17 @@ const initStockGoalsChart = () => {
 				bindTooltip($bar, { title: seriesLabel(series), color, lines: summaryLines(point) });
 
 				if (mode === 'euro') {
-					$bar.addEventListener('pointerenter', () => focusGoalLine(index));
-					$bar.addEventListener('pointerleave', () => focusGoalLine(null));
+					$bar.addEventListener('pointerenter', (event) => {
+						if (event.pointerType !== 'touch') {
+							focusGoalLine(index);
+						}
+					});
+					$bar.addEventListener('pointerleave', (event) => {
+						if (event.pointerType !== 'touch') {
+							focusGoalLine(null);
+						}
+					});
+					$bar.addEventListener('click', () => focusGoalLine(index));
 				}
 
 				$svg.append($bar);
