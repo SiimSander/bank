@@ -107,7 +107,7 @@ require_once __DIR__ . '/partials/info-ring.php';
 						<?php foreach ($investmentsBreakdown as $item): ?>
 							<?php $noteParts = splitInvestmentNote($item['note']); ?>
 							<div class="month-history-breakdown__item">
-								<span class="month-history-breakdown__name<?php echo $noteParts['ticker'] === '' ? ' month-history-breakdown__name--wide' : ''; ?>"><?php echo htmlspecialchars($noteParts['name']); ?></span>
+								<span class="month-history-breakdown__name<?php echo $noteParts['ticker'] === '' ? ' month-history-breakdown__name--wide' : ''; ?>"><?php echo stockLogoImage($stockLogoFor($item['note'])['url'] ?? null, 'stock-logo--inline'); ?><?php echo htmlspecialchars($noteParts['name']); ?></span>
 								<?php if ($noteParts['ticker'] !== ''): ?>
 									<span class="month-history-breakdown__ticker"><?php echo htmlspecialchars($noteParts['ticker']); ?></span>
 								<?php endif; ?>
