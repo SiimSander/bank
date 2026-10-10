@@ -28,6 +28,7 @@ abstract class DatabaseTestCase extends TestCase {
 			'net_worth_snapshots',
 			'stock_goals',
 			'stock_goal_colors',
+			'stock_goal_logos',
 			'goal_miss_carryover',
 			'goal_miss_processed_days',
 			'bank_connections',
