@@ -115,7 +115,7 @@ document.querySelectorAll('.js-bank-entry-save').forEach((button) => {
 		});
 
 		if (response.ok) {
-			window.location.reload();
+			reloadKeepingTodayEntriesExpanded();
 		}
 	});
 });
@@ -340,6 +340,17 @@ document.querySelectorAll('.js-bank-entry-edit-form').forEach(($editForm) => {
 
 const TODAY_ENTRIES_STACK_LIMIT = 5;
 const TODAY_ENTRIES_PEEK_STEP_PX = 20;
+const TODAY_ENTRIES_EXPANDED_KEY = 'todayEntriesExpanded';
+
+const reloadKeepingTodayEntriesExpanded = () => {
+	const $stack = document.querySelector('.js-today-entries-stack');
+
+	if ($stack?.classList.contains('today-entries-stack--expanded')) {
+		sessionStorage.setItem(TODAY_ENTRIES_EXPANDED_KEY, '1');
+	}
+
+	window.location.reload();
+};
 
 const updateTodayEntriesToggleLabel = ($stack, $label, expanded) => {
 	const total = Number.parseInt($stack.dataset.totalCount ?? '0', 10);
@@ -377,6 +388,9 @@ const measureTodayEntriesStack = ($stack, $items) => {
 };
 
 const initTodayEntriesStack = () => {
+	const restoreExpanded = sessionStorage.getItem(TODAY_ENTRIES_EXPANDED_KEY) === '1';
+	sessionStorage.removeItem(TODAY_ENTRIES_EXPANDED_KEY);
+
 	const $stack = document.querySelector('.js-today-entries-stack');
 
 	if (!$stack) {
@@ -447,6 +461,10 @@ const initTodayEntriesStack = () => {
 			observer.observe($editForm, { attributes: true, attributeFilter: ['hidden'] });
 		}
 	}
+
+	if (restoreExpanded) {
+		setExpanded(true);
+	}
 };
 
 initTodayEntriesStack();
@@ -467,7 +485,7 @@ document.querySelectorAll('.js-bank-delete-btn').forEach((button) => {
 		});
 
 		if (response.ok) {
-			window.location.reload();
+			reloadKeepingTodayEntriesExpanded();
 		}
 	});
 });
