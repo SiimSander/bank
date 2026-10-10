@@ -613,6 +613,10 @@ a.stock-month-switcher__arrow:hover {
 	max-width: none;
 }
 
+.stock-chart__scroll--lock-touch .stock-chart__svg {
+	touch-action: none;
+}
+
 .stock-chart__controls {
 	display: flex;
 	flex-wrap: wrap;
@@ -670,14 +674,29 @@ a.stock-month-switcher__arrow:hover {
 }
 
 .stock-chart__cursor,
-.stock-chart__marker {
+.stock-chart__marker,
+.stock-chart__readout {
 	opacity: 0;
 	pointer-events: none;
 }
 
 .stock-chart__svg--hovering .stock-chart__cursor,
-.stock-chart__svg--hovering .stock-chart__marker {
+.stock-chart__svg--hovering .stock-chart__marker,
+.stock-chart__svg--hovering .stock-chart__readout {
 	opacity: 1;
+}
+
+.stock-chart__svg--hovering .stock-chart__extreme-label {
+	opacity: 0;
+}
+
+.stock-chart__readout {
+	font-size: 0.75rem;
+	fill: var(--color-text);
+}
+
+.stock-chart__readout--amount {
+	font-weight: 700;
 }
 
 .stock-chart__cursor {
@@ -723,6 +742,13 @@ a.stock-month-switcher__arrow:hover {
 	stroke-dasharray: 6 5;
 }
 
+.stock-chart__bar-label {
+	font-size: 9px;
+	font-weight: 600;
+	dominant-baseline: central;
+	pointer-events: none;
+}
+
 .stock-chart__goal-path {
 	fill: none;
 	stroke-width: 1.5;
@@ -730,6 +756,11 @@ a.stock-month-switcher__arrow:hover {
 	opacity: 0.85;
 	pointer-events: none;
 	transition: opacity 0.15s ease;
+}
+
+.stock-chart__goal-path--idle {
+	stroke: #6b7280;
+	opacity: 0;
 }
 
 .stock-chart__svg--focus-goal .stock-chart__goal-path {
