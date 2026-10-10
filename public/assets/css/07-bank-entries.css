@@ -13,16 +13,19 @@
 .today-entries-stack {
 	--stack-peek-height: 1.25rem;
 	--stack-step: 1.25rem;
+	--stack-front-height: 0px;
+	--stack-collapsed-height: auto;
+	--stack-index: 0;
 	margin-bottom: 1rem;
 }
 
 .today-entries-stack:not(.today-entries-stack--expanded) {
-	min-height: var(--stack-collapsed-height, auto);
+	min-height: var(--stack-collapsed-height);
 }
 
 .today-entries-stack:not(.today-entries-stack--expanded) .bank-entry-list--stacked {
 	position: relative;
-	min-height: var(--stack-collapsed-height, auto);
+	min-height: var(--stack-collapsed-height);
 	margin-bottom: 0;
 }
 
@@ -40,8 +43,8 @@
 	width: calc(100% - (var(--stack-index) * 0.375rem));
 	margin-left: calc(var(--stack-index) * 0.1875rem);
 	margin-right: calc(var(--stack-index) * 0.1875rem);
-	top: calc(var(--stack-front-height, 0px) + (var(--stack-index) - 1) * var(--stack-peek-height, 1.25rem));
-	z-index: calc(90 - var(--stack-index, 0));
+	top: calc(var(--stack-front-height) + (var(--stack-index) - 1) * var(--stack-peek-height));
+	z-index: calc(90 - var(--stack-index));
 	height: var(--stack-peek-height);
 	min-height: var(--stack-peek-height);
 	max-height: var(--stack-peek-height);
@@ -58,8 +61,7 @@
 }
 
 .today-entries-stack:not(.today-entries-stack--expanded) .bank-entry-item--stack-hidden {
-	visibility: hidden;
-	pointer-events: none;
+	display: none;
 }
 
 .today-entries-stack--expanded .bank-entry-list--stacked .bank-entry-item {
