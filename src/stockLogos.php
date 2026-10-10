@@ -10,6 +10,7 @@ const STOCK_LOGO_EXTENSIONS = ['svg', 'png', 'webp', 'jpg'];
 
 /** Tickers that share another ticker's logo, such as the two Vanguard funds; a logo file named after the ticker wins. */
 const STOCK_LOGO_ALIASES = [
+	// ishares
 	'iwda' => 'cspx',
 	'sec0' => 'cspx',
 	'cndx' => 'cspx',
@@ -55,6 +56,7 @@ const STOCK_LOGO_ALIASES = [
 	'cebl' => 'cspx',
 	'ijpa' => 'cspx',
 	'iebc' => 'cspx',
+	// vanguard
 	'vwra' => 'vuaa',
 	'vusd' => 'vuaa',
 	'vwce' => 'vuaa',
@@ -94,7 +96,9 @@ const STOCK_LOGO_ALIASES = [
 	'v3ab' => 'vuaa',
 	'vagu' => 'vuaa',
 	'vgla' => 'vuaa',
+	// google
 	'goog' => 'googl',
+	// invesco
 	'ivz' => 'eqqq',
 	'spxp' => 'eqqq',
 	'fwia' => 'eqqq',
@@ -334,6 +338,18 @@ function getStockPortfolio(PDO $pdo, int $userId, ?string $logoDirectory = null)
 	}
 
 	return ['total' => $grandTotal, 'items' => $items];
+}
+
+/**
+ * Data attributes for a stock <option>, which the stock dropdown script uses to draw the logo, name and ticker.
+ */
+function stockOptionAttributes(string $note, ?Closure $stockLogoFor): string {
+	$parts = splitInvestmentNote($note);
+	$logo = $stockLogoFor === null ? null : $stockLogoFor($note);
+
+	return ' data-name="' . htmlspecialchars($parts['name'], ENT_QUOTES) . '"'
+		. ' data-ticker="' . htmlspecialchars($parts['ticker'], ENT_QUOTES) . '"'
+		. ' data-logo="' . htmlspecialchars($logo['url'] ?? '', ENT_QUOTES) . '"';
 }
 
 function stockLogoImage(?string $url, string $extraClass = ''): string {
