@@ -94,6 +94,12 @@ const STOCK_LOGO_ALIASES = [
 	'v3ab' => 'vuaa',
 	'vagu' => 'vuaa',
 	'vgla' => 'vuaa',
+	'goog' => 'googl',
+	'ivz' => 'eqqq',
+	'spxp' => 'eqqq',
+	'fwia' => 'eqqq',
+	'fwrg' => 'eqqq',
+	'bchs' => 'eqqq',
 ];
 
 /** Brand color of each logo slug; a stock with that logo and no color of its own gets it. */
@@ -110,6 +116,9 @@ const STOCK_LOGO_COLORS = [
 	'msft' => '#ffffff',
 	'aapl' => '#473449',
 	'cspx' => '#66b833',
+	'googl' => '#ffffff',
+	'amzn' => '#eb6502',
+	'eqqq' => '#181d8c',
 ];
 
 /**
