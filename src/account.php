@@ -128,6 +128,14 @@ function buildAccountExport(PDO $pdo, int $accountId): ?array {
 	);
 	$stockGoalColors->execute([$accountId]);
 
+	$stockGoalLogos = $pdo->prepare(
+		'SELECT stock_key, logo_slug, created_at, updated_at
+		FROM stock_goal_logos
+		WHERE account_id = ?
+		ORDER BY stock_key ASC'
+	);
+	$stockGoalLogos->execute([$accountId]);
+
 	$connections = $pdo->prepare(
 		'SELECT aspsp_name, aspsp_country, bank_account_uid, iban, valid_until, is_main_account, last_synced_at, last_sync_attempt_at, created_at
 		FROM bank_connections
@@ -159,6 +167,7 @@ function buildAccountExport(PDO $pdo, int $accountId): ?array {
 		'net_worth_snapshots' => $netWorth->fetchAll(),
 		'stock_goals' => $stockGoals->fetchAll(),
 		'stock_goal_colors' => $stockGoalColors->fetchAll(),
+		'stock_goal_logos' => $stockGoalLogos->fetchAll(),
 		'bank_connections' => $connections->fetchAll(),
 		'consents' => $consents,
 	];
@@ -197,6 +206,7 @@ function deleteAccount(PDO $pdo, int $accountId, string $password, string $usern
 		$pdo->prepare('DELETE FROM net_worth_snapshots WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM stock_goals WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM stock_goal_colors WHERE account_id = ?')->execute([$accountId]);
+		$pdo->prepare('DELETE FROM stock_goal_logos WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM bank_connections WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM bank_entry_types WHERE account_id = ?')->execute([$accountId]);
 		$pdo->prepare('DELETE FROM password_reset_tokens WHERE account_id = ?')->execute([$accountId]);
