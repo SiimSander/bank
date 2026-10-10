@@ -1,0 +1,10 @@
+CREATE TABLE stock_goal_logos (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	account_id INT NOT NULL,
+	stock_key VARCHAR(150) NOT NULL,
+	logo_slug VARCHAR(60) NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	UNIQUE (account_id, stock_key),
+	FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
