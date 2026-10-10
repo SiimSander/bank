@@ -277,8 +277,13 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 						<?php if ($settlement['covers_total'] > 0): ?>
 							<?php
 							$keptExtra = round(max($settlement['surplus'] - $settlement['covers_total'], 0), 2);
-							$coverTotal = $settlement['covers_total'] + $keptExtra;
-							$coverLines = ['Over this month\'s goal: ' . $money($settlement['surplus'])];
+							$coverPercent = $settlement['open_before'] > 0
+								? min($settlement['covers_total'] / $settlement['open_before'] * 100, 100)
+								: 100;
+							$coverLines = [
+								'Over this month\'s goal: ' . $money($settlement['surplus']),
+								'Missing from earlier months: ' . $money($settlement['open_before']),
+							];
 							foreach ($settlement['covers'] as $covered) {
 								$coverLines[] = $money($covered['amount']) . ' into ' . date('F Y', strtotime($covered['month'])) . '\'s ' . $money($covered['goal']) . ' goal (' . $money($covered['shortfall']) . ' missed)';
 							}
@@ -292,7 +297,7 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 									$settlement['covers']
 								))); ?>
 							</p>
-							<?php echo $coverageBar($settlement['covers_total'] / $coverTotal * 100, 'Contributed to missed months', $coverLines, '+' . $money($settlement['covers_total']) . ' covers missed months', false); ?>
+							<?php echo $coverageBar($coverPercent, 'Contributed to missed months', $coverLines, '+' . $money($settlement['covers_total']) . ' covers missed months', false); ?>
 						<?php endif; ?>
 					</article>
 				<?php endforeach; ?>
