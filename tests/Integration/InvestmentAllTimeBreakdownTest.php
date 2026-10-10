@@ -12,16 +12,16 @@ final class InvestmentAllTimeBreakdownTest extends DatabaseTestCase {
 		$this->seedTypes($accountId);
 
 		$this->addEntry($accountId, 'investments', 100, '2026-01-05', note: 'S&P 500');
-		$this->addEntry($accountId, 'investments', 50, '2026-01-10', note: 'Bitcoin');
+		$this->addEntry($accountId, 'investments', 50, '2026-01-10', note: 'Gold');
 		$this->addEntry($accountId, 'investments', 75, '2026-02-10', note: 'S&P 500');
-		$this->addEntry($accountId, 'investments', 25, '2026-02-15', note: 'Bitcoin');
+		$this->addEntry($accountId, 'investments', 25, '2026-02-15', note: 'Gold');
 		$this->addEntry($accountId, 'investments', 10, '2026-02-20', note: '');
 
 		$breakdown = getInvestmentBreakdownAllTime($this->pdo, $accountId);
 
 		self::assertSame([
 			['note' => 'S&P 500', 'amount' => 175.0],
-			['note' => 'Bitcoin', 'amount' => 75.0],
+			['note' => 'Gold', 'amount' => 75.0],
 			['note' => 'Other', 'amount' => 10.0],
 		], $breakdown);
 	}
@@ -31,12 +31,12 @@ final class InvestmentAllTimeBreakdownTest extends DatabaseTestCase {
 		$this->seedTypes($accountId);
 
 		$this->addEntry($accountId, 'investments', 100, '2026-01-05', note: 'S&P 500');
-		$this->addEntry($accountId, 'investments', 50, '2026-02-10', note: 'Bitcoin');
+		$this->addEntry($accountId, 'investments', 50, '2026-02-10', note: 'Gold');
 
 		$breakdown = getInvestmentBreakdownByNote($this->pdo, $accountId, '2026-02-01', '2026-02-28');
 
 		self::assertSame([
-			['note' => 'Bitcoin', 'amount' => 50.0],
+			['note' => 'Gold', 'amount' => 50.0],
 		], $breakdown);
 	}
 
