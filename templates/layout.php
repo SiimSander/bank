@@ -69,6 +69,7 @@ if (isset($_SESSION['flash'])) {
 		<script src="/assets/js/habits.js" defer></script>
 	<?php endif; ?>
 	<?php if ($loadBankJs): ?>
+		<script src="/assets/js/stock-select.js" defer></script>
 		<script src="/assets/js/bank.js" defer></script>
 	<?php endif; ?>
 	<?php if ($uri === '/bank/configure'): ?>
