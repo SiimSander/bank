@@ -319,17 +319,24 @@ switch ($uri) {
 
 		requireCsrfToken(true);
 
+		$isNewStock = ($_POST['new_stock'] ?? '') === '1';
+		$stockNote = (string) ($_POST['note'] ?? '');
+
+		if ($isNewStock) {
+			$stockNote = resolveStockNote(db(), (int) $_SESSION['user_id'], $stockNote);
+		}
+
 		$result = setStockGoal(
 			db(),
 			(int) $_SESSION['user_id'],
-			(string) ($_POST['note'] ?? ''),
+			$stockNote,
 			parseMoneyAmount($_POST['amount'] ?? null) ?? 0.0,
-			($_POST['new_stock'] ?? '') === '1',
+			$isNewStock,
 			(string) ($_POST['logo'] ?? '') !== '' ? (string) $_POST['logo'] : null
 		);
 
 		if ($result === true && ($_POST['logo'] ?? '') !== '') {
-			$result = setStockLogo(db(), (int) $_SESSION['user_id'], (string) ($_POST['note'] ?? ''), (string) $_POST['logo']);
+			$result = setStockLogo(db(), (int) $_SESSION['user_id'], $stockNote, (string) $_POST['logo']);
 		}
 
 		if ($result !== true) {
