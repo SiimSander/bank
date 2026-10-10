@@ -1,0 +1,147 @@
+/* Stock logos and the portfolio map */
+
+.stock-logo {
+	display: inline-block;
+	flex-shrink: 0;
+	width: 1.25em;
+	height: 1.25em;
+	object-fit: contain;
+	border-radius: 0.25em;
+	vertical-align: middle;
+}
+
+.stock-logo--inline {
+	margin-right: 0.45em;
+}
+
+.stock-logo--action {
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 8px;
+}
+
+.stock-chart__bar-logo {
+	pointer-events: none;
+}
+
+.stock-chart__tooltip strong,
+.stock-ring__tooltip strong,
+.stock-portfolio__tooltip strong {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+}
+
+.stock-logo-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
+	gap: 0.5rem;
+	max-height: 12rem;
+	padding: 0.125rem;
+	overflow-y: auto;
+}
+
+.stock-logo-picker__tile {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	padding: 0.3rem;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	background-color: rgba(255, 255, 255, 0.06);
+	border: 2px solid transparent;
+	border-radius: 10px;
+}
+
+.stock-logo-picker__tile:hover {
+	background-color: rgba(255, 255, 255, 0.12);
+}
+
+.stock-logo-picker__tile .stock-logo {
+	width: 100%;
+	height: 100%;
+	border-radius: 6px;
+}
+
+.stock-logo-picker__tile svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.stock-logo-picker__tile--selected {
+	color: var(--color-text);
+	background-color: rgba(255, 255, 255, 0.12);
+	border-color: var(--color-text);
+}
+
+.stock-portfolio__map {
+	position: relative;
+	width: 100%;
+	min-height: 15rem;
+	overflow: hidden;
+	background-color: var(--color-surface-input);
+	border-radius: 12px;
+}
+
+.stock-portfolio__tile {
+	position: absolute;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.2rem;
+	padding: 0.25rem;
+	overflow: hidden;
+	text-align: center;
+	cursor: pointer;
+	background-color: color-mix(in srgb, var(--tile-color, #a78bfa) 16%, var(--color-surface-elevated));
+	border: 1px solid var(--color-surface);
+	transition: background-color 0.15s ease;
+}
+
+.stock-portfolio__tile:hover,
+.stock-portfolio__tile--active {
+	background-color: color-mix(in srgb, var(--tile-color, #a78bfa) 32%, var(--color-surface-elevated));
+}
+
+.stock-portfolio__tile .stock-logo {
+	border-radius: 6px;
+}
+
+.stock-portfolio__ticker,
+.stock-portfolio__percent {
+	max-width: 100%;
+	overflow: hidden;
+	font-size: 0.7rem;
+	line-height: 1.2;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--color-text-muted);
+}
+
+.stock-portfolio__percent {
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.stock-portfolio__tooltip {
+	position: absolute;
+	z-index: 5;
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.75rem;
+	white-space: nowrap;
+	color: var(--color-text);
+	pointer-events: none;
+	background-color: var(--color-surface-elevated);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+}
+
+.stock-portfolio__tooltip[hidden] {
+	display: none;
+}
