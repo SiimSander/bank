@@ -366,7 +366,7 @@ a.stock-month-switcher__arrow:hover {
 
 .stock-card-grid {
 	display: grid;
-	grid-template-columns: 1fr;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 25rem), 1fr));
 	gap: 0.75rem;
 }
 
@@ -400,13 +400,20 @@ a.stock-month-switcher__arrow:hover {
 
 .stock-card__title {
 	display: flex;
-	flex-wrap: wrap;
 	align-items: center;
-	gap: 0.375rem 0.625rem;
+	gap: 0.625rem;
 	min-width: 0;
 }
 
+.stock-card__title .stock-chip,
+.stock-card__name .stock-logo {
+	flex-shrink: 0;
+}
+
 .stock-card__name {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 	margin: 0;
 	font-size: 1rem;
 	font-weight: 600;
@@ -816,10 +823,6 @@ a.stock-month-switcher__arrow:hover {
 }
 
 @media (min-width: 768px) {
-	.stock-card-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
 	.stock-summary {
 		flex-direction: row;
 		gap: 2rem;
@@ -917,12 +920,6 @@ a.stock-month-switcher__arrow:hover {
 		margin-left: 0.25rem;
 		color: var(--color-investments);
 		font-weight: 600;
-	}
-}
-
-@media (min-width: 1200px) {
-	.stock-card-grid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
 	}
 }
 
