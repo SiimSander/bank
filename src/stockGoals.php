@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/Clock.php';
 require_once __DIR__ . '/bank.php';
+require_once __DIR__ . '/stockLogos.php';
 
 const STOCK_GOAL_MAX_AMOUNT = 1000000.0;
 const STOCK_GOAL_NOTE_MAX_LENGTH = 150;
@@ -249,7 +250,7 @@ function storeStockColor(PDO $pdo, int $userId, string $key, string $color, bool
  * Gives a stock that is getting its first goal a random colour no other stock uses. The colours the existing
  * stocks show right now are stored first so they cannot shift when the new stock joins.
  */
-function assignColorToNewStock(PDO $pdo, int $userId, string $note): void {
+function assignColorToNewStock(PDO $pdo, int $userId, string $note, ?string $brandColor = null): void {
 	$key = stockGoalKey($note);
 	$colors = getStockColors($pdo, $userId, getStockGoalHistory($pdo, $userId));
 
@@ -258,7 +259,7 @@ function assignColorToNewStock(PDO $pdo, int $userId, string $note): void {
 	}
 
 	if (!isset($colors[$key])) {
-		storeStockColor($pdo, $userId, $key, pickRandomStockColor(array_values($colors)), false);
+		storeStockColor($pdo, $userId, $key, $brandColor ?? pickRandomStockColor(array_values($colors)), false);
 	}
 }
 
@@ -545,6 +546,7 @@ function getStockGoalRows(PDO $pdo, int $userId, string $month): array {
 	$spellings = getStockNoteSpellings($pdo, $userId);
 	$goals = getStockGoalHistory($pdo, $userId);
 	$colors = getStockColors($pdo, $userId, $goals);
+	$logoFor = stockLogoResolver($pdo, $userId);
 	$isCurrentMonth = $month === Clock::monthStart();
 
 	$keys = array_unique(array_merge(array_keys($spellings), array_keys($goals)));
@@ -573,13 +575,16 @@ function getStockGoalRows(PDO $pdo, int $userId, string $month): array {
 
 		$note = $spellings[$key] ?? $goals[$key]['note'];
 		$parts = splitInvestmentNote($note);
+		$logo = $logoFor($note);
 
 		$rows[] = [
 			'key' => $key,
 			'note' => $note,
 			'name' => $parts['name'],
 			'ticker' => $parts['ticker'],
-			'color' => $colors[$key] ?? null,
+			'color' => $colors[$key] ?? stockLogoColor($logo['slug'] ?? null),
+			'logo' => $logo['url'] ?? null,
+			'logo_slug' => $logo['slug'] ?? null,
 			'goal' => $baseGoal,
 			'target' => $target,
 			'carry_missed' => $carry['missed'],
@@ -679,6 +684,7 @@ function getStockRingSectors(array $rows): array {
 			'name' => $row['name'],
 			'ticker' => $row['ticker'],
 			'color' => $row['color'] ?? '#22c55e',
+			'logo' => $row['logo'],
 			'goal' => $row['goal'],
 			'invested' => $row['invested'],
 			'percent' => round($row['invested'] / $row['goal'] * 100, 1),
@@ -721,6 +727,7 @@ function getStockGoalChartSeries(PDO $pdo, int $userId): array {
 	$spellings = getStockNoteSpellings($pdo, $userId);
 	$current = Clock::monthStart();
 	$colors = getStockColors($pdo, $userId, $goals);
+	$logoFor = stockLogoResolver($pdo, $userId);
 
 	$firstGoalMonths = [];
 	foreach ($goals as $key => $stock) {
@@ -767,6 +774,7 @@ function getStockGoalChartSeries(PDO $pdo, int $userId): array {
 			'name' => $parts['name'],
 			'ticker' => $parts['ticker'],
 			'color' => $colors[$key],
+			'logo' => $logoFor($note)['url'] ?? null,
 			'points' => $points,
 			'current_goal' => getStockGoalAmountForMonth($goals[$key]['history'], $current),
 			'last_goal' => $positiveGoals === [] ? 0.0 : end($positiveGoals),
@@ -779,9 +787,56 @@ function getStockGoalChartSeries(PDO $pdo, int $userId): array {
 }
 
 /**
+ * Removes a stock together with its goals, colour and logo. A stock with any investment entry cannot be deleted,
+ * because the entries would bring it straight back.
+ *
  * @return true|string true on success, otherwise an error message
  */
-function setStockGoal(PDO $pdo, int $userId, string $note, float $amount, bool $isNewStock = false): bool|string {
+function deleteStock(PDO $pdo, int $userId, string $note): bool|string {
+	$key = stockGoalKey($note);
+
+	$rawSql = $pdo->prepare(
+		"SELECT COUNT(*) FROM bank_entries
+		WHERE account_id = ? AND type = 'investments' AND LOWER(TRIM(note)) = ?"
+	);
+	$rawSql->execute([$userId, $key]);
+
+	if ((int) $rawSql->fetchColumn() > 0) {
+		return "You can't delete this stock because it has investment entries.";
+	}
+
+	if (!isset(getStockGoalHistory($pdo, $userId)[$key])) {
+		return 'Stock not found.';
+	}
+
+	$pdo->beginTransaction();
+
+	try {
+		$pdo->prepare('DELETE FROM stock_goals WHERE account_id = ? AND LOWER(TRIM(stock_note)) = ?')->execute([$userId, $key]);
+		$pdo->prepare('DELETE FROM stock_goal_colors WHERE account_id = ? AND stock_key = ?')->execute([$userId, $key]);
+		$pdo->prepare('DELETE FROM stock_goal_logos WHERE account_id = ? AND stock_key = ?')->execute([$userId, $key]);
+		$pdo->commit();
+	} catch (Throwable $e) {
+		$pdo->rollBack();
+
+		throw $e;
+	}
+
+	return true;
+}
+
+/**
+ * @return true|string true on success, otherwise an error message
+ */
+function setStockGoal(
+	PDO $pdo,
+	int $userId,
+	string $note,
+	float $amount,
+	bool $isNewStock = false,
+	?string $logoSlug = null,
+	?string $logoDirectory = null
+): bool|string {
 	$note = trim($note);
 
 	if ($note === '' || mb_strlen($note) > STOCK_GOAL_NOTE_MAX_LENGTH) {
@@ -810,7 +865,7 @@ function setStockGoal(PDO $pdo, int $userId, string $note, float $amount, bool $
 	}
 
 	if ($existing === null) {
-		assignColorToNewStock($pdo, $userId, $note);
+		assignColorToNewStock($pdo, $userId, $note, stockLogoColorForNewStock($note, $logoSlug, $logoDirectory));
 	}
 
 	$rawSql = $pdo->prepare(
