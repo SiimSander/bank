@@ -848,6 +848,11 @@ function setStockGoal(
 	}
 
 	$amount = round($amount, 2);
+
+	if ($isNewStock) {
+		$note = resolveStockNote($pdo, $userId, $note);
+	}
+
 	$existing = getStockGoalHistory($pdo, $userId)[stockGoalKey($note)] ?? null;
 
 	if ($isNewStock) {
