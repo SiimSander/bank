@@ -25,6 +25,7 @@ require_once dirname(__DIR__) . '/src/typeIncomePercentHistory.php';
 require_once dirname(__DIR__) . '/src/goalCalculations.php';
 require_once dirname(__DIR__) . '/src/bank.php';
 require_once dirname(__DIR__) . '/src/stockGoals.php';
+require_once dirname(__DIR__) . '/src/stockLogos.php';
 require_once dirname(__DIR__) . '/src/lhvSync.php';
 require_once dirname(__DIR__) . '/src/auth.php';
 require_once dirname(__DIR__) . '/src/account.php';
