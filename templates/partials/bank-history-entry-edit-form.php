@@ -29,7 +29,7 @@ $entryUsesStock = $entryNote !== '' && in_array($entryNote, array_column($histor
 	<?php if ($historyStockNotes !== []): ?>
 		<select class="js-bank-entry-stock" aria-label="Stock">
 			<?php foreach ($historyStockNotes as $stockNote): ?>
-				<option value="<?php echo htmlspecialchars($stockNote['note']); ?>"<?php echo ($entryUsesStock && $stockNote['note'] === $entryNote) ? ' selected' : ''; ?>><?php echo htmlspecialchars($stockNote['label']); ?></option>
+				<option value="<?php echo htmlspecialchars($stockNote['note']); ?>"<?php echo stockOptionAttributes($stockNote['note'], $stockLogoFor ?? null); ?><?php echo ($entryUsesStock && $stockNote['note'] === $entryNote) ? ' selected' : ''; ?>><?php echo htmlspecialchars($stockNote['note']); ?></option>
 			<?php endforeach; ?>
 			<option value="" data-new-stock="1"<?php echo $entryUsesStock ? '' : ' selected'; ?>>+ New stock...</option>
 		</select>
