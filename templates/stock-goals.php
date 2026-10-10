@@ -421,8 +421,8 @@ $ringSectors = getStockRingSectors($stockGoalRows);
 			<form class="stock-goal-form js-stock-goal-form" novalidate>
 				<div class="form-field js-stock-goal-name-field" hidden>
 					<label for="stock-goal-name">Stock</label>
-					<input type="text" id="stock-goal-name" class="js-stock-goal-name" maxlength="<?php echo $escape(STOCK_GOAL_NOTE_MAX_LENGTH); ?>" placeholder="Vanguard S&amp;P 500 (€VUAA)" autocomplete="off">
-					<p class="form-field__hint">We recommend this stock note format: Stock name (€TICKER)</p>
+					<input type="text" id="stock-goal-name" class="js-stock-goal-name" maxlength="<?php echo $escape(STOCK_GOAL_NOTE_MAX_LENGTH); ?>" placeholder="Vanguard S&amp;P 500" autocomplete="off">
+					<p class="form-field__hint">Type the stock name. The ticker is added automatically for known stocks; for others, use Stock name (€TICKER).</p>
 				</div>
 				<div class="form-field">
 					<label for="stock-goal-amount">Monthly goal (€)</label>
