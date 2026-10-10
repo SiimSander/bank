@@ -95,7 +95,7 @@ final class StockGoalsTest extends DatabaseTestCase {
 		$this->insertGoal($accountId, self::WISE, 400, '2026-09-01');
 		$this->insertGoal($accountId, 'Bitcoin (€BTC)', 200, '2026-09-01');
 		$this->insertGoal($accountId, self::VUAA, 800, '2026-09-01');
-		$this->insertGoal($accountId, 'Apple (€AAPL)', 300, '2026-09-01');
+		$this->insertGoal($accountId, 'Acme (€ACME)', 300, '2026-09-01');
 		$this->insertGoal($accountId, 'Zeta (€ZETA)', 100, '2026-09-01');
 		$this->addEntry($accountId, 'investments', 400, '2026-09-02', note: self::WISE);
 		$this->addEntry($accountId, 'investments', 150, '2026-09-03', note: self::VUAA);
@@ -103,7 +103,7 @@ final class StockGoalsTest extends DatabaseTestCase {
 		$rows = getStockGoalRows($this->pdo, $accountId, '2026-09-01');
 
 		self::assertSame(
-			[self::WISE, self::VUAA, 'Apple (€AAPL)', 'Bitcoin (€BTC)', 'Zeta (€ZETA)'],
+			[self::WISE, self::VUAA, 'Acme (€ACME)', 'Bitcoin (€BTC)', 'Zeta (€ZETA)'],
 			array_column($rows, 'note')
 		);
 	}
@@ -527,7 +527,7 @@ final class StockGoalsTest extends DatabaseTestCase {
 	public function testStockWithoutAnyGoalHasNoColor(): void {
 		$accountId = $this->createTestAccount();
 		$this->seedTypes($accountId);
-		$this->addEntry($accountId, 'investments', 100, '2026-09-02', note: self::VUAA);
+		$this->addEntry($accountId, 'investments', 100, '2026-09-02', note: 'Acme (€ACME)');
 
 		$rows = getStockGoalRows($this->pdo, $accountId, '2026-09-01');
 
@@ -598,13 +598,13 @@ final class StockGoalsTest extends DatabaseTestCase {
 		$this->insertGoal($accountId, self::VUAA, 800, '2026-08-01');
 		$this->insertGoal($accountId, self::WISE, 400, '2026-08-01');
 
-		self::assertTrue(setStockGoal($this->pdo, $accountId, 'Bitcoin (€BTC)', 200));
+		self::assertTrue(setStockGoal($this->pdo, $accountId, 'Acme (€ACME)', 200));
 
 		$colors = array_column(getStockGoalRows($this->pdo, $accountId, '2026-09-01'), 'color', 'note');
 
 		self::assertCount(3, array_unique($colors));
-		self::assertTrue(isValidStockColor($colors['Bitcoin (€BTC)']));
-		self::assertContains($colors['Bitcoin (€BTC)'], STOCK_GOAL_COLORS);
+		self::assertTrue(isValidStockColor($colors['Acme (€ACME)']));
+		self::assertContains($colors['Acme (€ACME)'], STOCK_GOAL_COLORS);
 	}
 
 	public function testAddingAStockDoesNotChangeTheColorsOfExistingStocks(): void {
@@ -613,7 +613,7 @@ final class StockGoalsTest extends DatabaseTestCase {
 		$this->insertGoal($accountId, self::VUAA, 800, '2026-09-01');
 		$before = array_column(getStockGoalRows($this->pdo, $accountId, '2026-09-01'), 'color', 'note');
 
-		setStockGoal($this->pdo, $accountId, 'Apple (€AAPL)', 100);
+		setStockGoal($this->pdo, $accountId, 'Acme (€ACME)', 100);
 
 		$after = array_column(getStockGoalRows($this->pdo, $accountId, '2026-09-01'), 'color', 'note');
 
@@ -706,6 +706,54 @@ final class StockGoalsTest extends DatabaseTestCase {
 		self::assertSame('2026-06-01', clampStockGoalMonth('2025-01', $bounds));
 		self::assertSame('2026-07-01', clampStockGoalMonth('2026-07', $bounds));
 		self::assertSame('2026-09-01', clampStockGoalMonth('garbage', $bounds));
+	}
+
+	public function testStockWithoutEntriesCanBeDeletedWithItsColourAndLogo(): void {
+		$accountId = $this->createTestAccount();
+		$this->insertGoal($accountId, self::WISE, 400, '2026-09-01');
+		$this->insertGoal($accountId, self::VUAA, 800, '2026-09-01');
+		setStockColor($this->pdo, $accountId, self::WISE, '#123456');
+		$this->pdo->prepare('INSERT INTO stock_goal_logos (account_id, stock_key, logo_slug) VALUES (?, ?, ?)')
+			->execute([$accountId, stockGoalKey(self::WISE), STOCK_LOGO_NONE]);
+
+		self::assertTrue(deleteStock($this->pdo, $accountId, '  WISE (£wise) '));
+
+		self::assertSame([stockGoalKey(self::VUAA)], array_keys(getStockGoalHistory($this->pdo, $accountId)));
+		self::assertArrayNotHasKey(stockGoalKey(self::WISE), getStoredStockColors($this->pdo, $accountId));
+		self::assertSame([], getStoredStockLogos($this->pdo, $accountId));
+		self::assertSame([self::VUAA], array_column(getStockGoalRows($this->pdo, $accountId, '2026-09-01'), 'note'));
+	}
+
+	public function testStockWithEntriesCannotBeDeleted(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+		$this->insertGoal($accountId, self::WISE, 400, '2026-09-01');
+		$this->addEntry($accountId, 'investments', 100, '2026-09-02', note: 'wise (£WISE)');
+
+		self::assertSame(
+			"You can't delete this stock because it has investment entries.",
+			deleteStock($this->pdo, $accountId, self::WISE)
+		);
+		self::assertArrayHasKey(stockGoalKey(self::WISE), getStockGoalHistory($this->pdo, $accountId));
+	}
+
+	public function testStockWithOnlyAWithdrawalEntryCannotBeDeleted(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+		$this->insertGoal($accountId, self::WISE, 400, '2026-09-01');
+		$this->addEntry($accountId, 'investments', -50, '2026-09-02', note: self::WISE);
+
+		self::assertIsString(deleteStock($this->pdo, $accountId, self::WISE));
+		self::assertArrayHasKey(stockGoalKey(self::WISE), getStockGoalHistory($this->pdo, $accountId));
+	}
+
+	public function testDeletingAnUnknownStockFailsAndOtherAccountsAreUntouched(): void {
+		$first = $this->createTestAccount();
+		$second = $this->createTestAccount();
+		$this->insertGoal($second, self::WISE, 400, '2026-09-01');
+
+		self::assertSame('Stock not found.', deleteStock($this->pdo, $first, self::WISE));
+		self::assertArrayHasKey(stockGoalKey(self::WISE), getStockGoalHistory($this->pdo, $second));
 	}
 
 	private function insertGoal(int $accountId, string $note, float $amount, string $effectiveFrom): void {
