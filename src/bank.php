@@ -4,6 +4,7 @@ require_once __DIR__ . '/BankRequestCache.php';
 require_once __DIR__ . '/Clock.php';
 require_once __DIR__ . '/bankTypes.php';
 require_once __DIR__ . '/goalCalculations.php';
+require_once __DIR__ . '/stockTickers.php';
 
 const BANK_ENTRY_METHODS = ['card', 'cash'];
 const BANK_DATE_RANGES = ['all', 'week', 'month', 'custom'];
@@ -122,6 +123,10 @@ function createBankEntry(PDO $pdo, int $userId, string $type, string $method, fl
 		return false;
 	}
 
+	if ($type === 'investments' && $note !== null) {
+		$note = resolveStockNote($pdo, $userId, $note);
+	}
+
 	$rawSql = $pdo->prepare(
 		'INSERT INTO bank_entries (account_id, entry_date, type, method, amount, note) VALUES (?, ?, ?, ?, ?, ?)'
 	);
@@ -177,6 +182,10 @@ function getTodayBankEntries(PDO $pdo, int $userId): array {
 function updateBankEntry(PDO $pdo, int $entryId, int $userId, string $type, string $method, float $amount, ?string $note): bool {
 	if (!isValidBankEntryType($pdo, $userId, $type) || !in_array($method, BANK_ENTRY_METHODS, true)) {
 		return false;
+	}
+
+	if ($type === 'investments' && $note !== null) {
+		$note = resolveStockNote($pdo, $userId, $note);
 	}
 
 	$beforeSql = $pdo->prepare('SELECT type, amount FROM bank_entries WHERE id = ? AND account_id = ?');
