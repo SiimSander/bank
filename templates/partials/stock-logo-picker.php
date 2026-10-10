@@ -5,7 +5,7 @@ if ($stockLogoOptions === []) {
 	return;
 }
 ?>
-<div class="form-field stock-logo-picker js-stock-logo-picker" data-slugs="<?php echo htmlspecialchars(json_encode(array_column($stockLogoOptions, 'slug')), ENT_QUOTES); ?>" data-aliases="<?php echo htmlspecialchars(json_encode(STOCK_LOGO_ALIASES), ENT_QUOTES); ?>">
+<div class="form-field stock-logo-picker js-stock-logo-picker" data-slugs="<?php echo htmlspecialchars(json_encode(array_column($stockLogoOptions, 'slug')), ENT_QUOTES); ?>" data-aliases="<?php echo htmlspecialchars(json_encode(STOCK_LOGO_ALIASES), ENT_QUOTES); ?>" data-names="<?php echo htmlspecialchars(json_encode(getStockNameLogoTickers(), JSON_UNESCAPED_UNICODE), ENT_QUOTES); ?>">
 	<label>Logo</label>
 	<div class="stock-logo-picker__grid" role="radiogroup" aria-label="Logo">
 		<button type="button" class="stock-logo-picker__tile stock-logo-picker__tile--none js-stock-logo-tile" role="radio" aria-checked="false"
