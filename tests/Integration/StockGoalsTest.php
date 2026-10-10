@@ -108,6 +108,27 @@ final class StockGoalsTest extends DatabaseTestCase {
 		);
 	}
 
+	public function testSettlementReportsWhatWasMissingBeforeTheMonthCoveredIt(): void {
+		$accountId = $this->createTestAccount();
+		$this->seedTypes($accountId);
+		$this->insertGoal($accountId, self::VUAA, 100, '2026-08-01');
+		$this->addEntry($accountId, 'investments', 25, '2026-08-10', note: self::VUAA);
+		$this->addEntry($accountId, 'investments', 150, '2026-09-10', note: self::VUAA);
+
+		$settlement = getStockGoalSettlementForMonth(
+			settleStockGoalMonths(
+				getStockGoalHistory($this->pdo, $accountId)[stockGoalKey(self::VUAA)]['history'],
+				['2026-08-01' => 25.0, '2026-09-01' => 150.0],
+				'2026-09-01',
+				true
+			),
+			'2026-09-01'
+		);
+
+		self::assertSame(75.0, $settlement['open_before']);
+		self::assertSame(50.0, $settlement['covers_total']);
+	}
+
 	public function testRingSectorsFollowTheMostInvestedOrder(): void {
 		$accountId = $this->createTestAccount();
 		$this->seedTypes($accountId);
