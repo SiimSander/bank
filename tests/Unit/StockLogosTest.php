@@ -116,4 +116,14 @@ final class StockLogosTest extends TestCase {
 		self::assertStringContainsString('src="/a.png?v=1&quot;&gt;"', stockLogoImage('/a.png?v=1">'));
 		self::assertStringContainsString('class="stock-logo stock-logo--action"', stockLogoImage('/a.png', 'stock-logo--action'));
 	}
+
+	public function testStockOptionAttributesCarryNameTickerAndLogo(): void {
+		$resolver = static fn (string $note): ?array => ['slug' => 'vuaa', 'url' => '/assets/img/stock-logos/vuaa.jpg'];
+
+		self::assertSame(
+			' data-name="Vanguard S&amp;P 500" data-ticker="(€VUAA)" data-logo="/assets/img/stock-logos/vuaa.jpg"',
+			stockOptionAttributes('Vanguard S&P 500 (€VUAA)', $resolver),
+		);
+		self::assertSame(' data-name="Gold" data-ticker="" data-logo=""', stockOptionAttributes('Gold', null));
+	}
 }
