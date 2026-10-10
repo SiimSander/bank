@@ -250,7 +250,12 @@ foreach ($bankTypes as $bankType) {
 							<span class="bank-entry-item__method"><?php echo htmlspecialchars(bankEntryMethodLabel($entry['method'])); ?></span>
 							<span class="bank-entry-item__amount<?php echo bankEntryDisplayAmountClass((float) $entry['amount'], $entryType); ?>"><?php echo htmlspecialchars(formatBankEntryDisplayAmount((float) $entry['amount'], $entryType)); ?></span>
 							<?php if ($entry['note']): ?>
-								<span class="bank-entry-item__note"><?php echo htmlspecialchars($entry['note']); ?></span>
+								<span class="bank-entry-item__note"><?php
+									if ($entry['type'] === 'investments') {
+										echo stockLogoImage($stockLogoFor((string) $entry['note'])['url'] ?? null, 'stock-logo--inline');
+									}
+									echo htmlspecialchars($entry['note']);
+								?></span>
 							<?php endif; ?>
 							<?php if ($entry['is_pending']): ?>
 								<span class="bank-entry-item__pending">Pending</span>
