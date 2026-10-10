@@ -28,6 +28,7 @@ function cssBundleFiles(): array {
 		'15-account-legal.css',
 		'16-calculator.css',
 		'17-stock-goals.css',
+		'18-stock-logos.css',
 	];
 }
 
